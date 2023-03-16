@@ -1,14 +1,18 @@
+require("dotenv").config();
 import bodyParser from "body-parser";
 import cors from "cors";
+import express from "express";
+import type { Request, Response, NextFunction } from 'express';
+import { whitelist } from "./_middlewares/authenticate-routes";
+
 import { userRouter } from "./users/user.controller";
 import { productRouter } from "./products/product.controller";
-const express = require('express');
-import type { Request, Response, NextFunction } from 'express';
 
 const app = express();
 
 // Add middleware
 app.use(express.json());
+app.use(whitelist);
 
 // middleware to log requests
 app.use((req: Request, res: Response, next: NextFunction) => {

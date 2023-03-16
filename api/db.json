@@ -1,13 +1,6 @@
 {
   "users": [
     {
-      "username": "user1",
-      "password": "user123",
-      "deposit": 5,
-      "role": "seller",
-      "id": "SgRlJJX_GpuzeZjFOeNsR"
-    },
-    {
       "username": "user2",
       "password": "user123",
       "deposit": 125,
@@ -15,12 +8,34 @@
       "id": "H8ULau8t9sMtnLyuSQhP4"
     },
     {
-      "username": "user3",
-      "password": "user123",
+      "username": "user5",
+      "password": "$2b$10$UjsMJt1V.4t2cUwhyC7EQ.j3ZnCrogq4WFXG2X6u838UY.wLpH4u6",
       "deposit": 150,
       "role": "buyer",
-      "id": "t9iwIXyUFNKbvFCciy5iu"
+      "id": "w6CsG_JayBtFctQnb2CVM"
+    },
+    {
+      "username": "user1",
+      "password": "$2b$10$92F5oR6gDfYYdu.LhEuR2.wmGEXk/4VFXzfAaodATfODHATi68ha2",
+      "deposit": 150,
+      "role": "seller",
+      "id": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "username": "user6",
+      "password": "$2b$10$3pg/3LtK/ww1thOLmy8lDeS6lRK7Hed6ZMv.7IMNu6MV.Y6RkBqH2",
+      "deposit": 155,
+      "role": "seller2",
+      "id": "v_YzwvmbMwfmSjYW76_Rt"
     }
   ],
-  "products": []
+  "products": [
+    {
+      "id": "tPvFTiY5g3_gKq0_E2eed",
+      "productName": "Test Product 23",
+      "amountAvailable": 155,
+      "cost": 755,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    }
+  ]
 }

@@ -1,11 +1,14 @@
 {
   "dependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/lowdb": "^1.0.11",
+    "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "env-cmd": "^10.1.0",
     "express": "^4.18.2",
     "joi": "^17.8.4",
+    "jsonwebtoken": "^9.0.0",
     "lowdb": "^1.0.0",
     "nanoid": "^3.1.22"
   },
@@ -16,7 +19,7 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "build": "tsc",
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon  --delay 1000 src/server.ts",
     "test": "test"
   },
   "author": "Carol Biro",

@@ -57,7 +57,7 @@ function deleteProduct(req: Request, res: Response, next: NextFunction) {
 
 function validateSchema(req, res, next) {
     const schema = Joi.object({
-        sellerId: Joi.number().required(),
+        sellerId: Joi.string().required(),
         productName:  Joi.string().required(),
         amountAvailable:  Joi.number().required(),
         cost:  Joi.number().required()
