@@ -30,13 +30,15 @@ function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextF
 
   // Define the whitelist middleware function
 export function whitelist(req: Request, res: Response, next: NextFunction) {
-    const whitelistRoutes = ['/users/login', '/users/signup']; // Array of whitelisted routes
+    const whitelistRoutes = ['/user/authenticate', '/user','/product']; // Array of whitelisted routes
 
     // Check if the requested route is in the whitelist
     if (whitelistRoutes.includes(req.path)) {
-        return next(); // Skip authentication for whitelisted routes
+        if(req.method !== 'POST' && req.path === '/user'){
+            // do nothing here and go to authentication
+        } else return next(); // Skip authentication for whitelisted routes
     }
 
     // If the requested route is not in the whitelist, continue with authentication
-    return authenticateToken(req, res, next);
+    return authenticateToken(req as AuthenticatedRequest, res, next);
 }
