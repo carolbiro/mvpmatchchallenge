@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "@types/lowdb": "^1.0.11",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "env-cmd": "^10.1.0",
+    "express": "^4.18.2",
+    "joi": "^17.8.4",
+    "lowdb": "^1.0.0",
+    "nanoid": "^3.1.22"
+  },
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Api for mvpmatch challenge",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "build": "tsc",
+    "dev": "nodemon src/server.ts",
+    "test": "test"
+  },
+  "author": "Carol Biro",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^18.15.3",
+    "nodemon": "^2.0.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}
