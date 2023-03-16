@@ -9,12 +9,12 @@ import { User } from "./user.model";
 export const userRouter = express.Router();
 const userService = new UserService();
 
-userRouter.post("/signup", validateSchema, addUser);
+userRouter.post("/", validateSchema, addUser);
 userRouter.get("/", getUsers);
 userRouter.get("/:id", getUserById);
 userRouter.put("/:id/deposit", depositCoins);
 userRouter.delete("/:id", deleteUser);
-userRouter.post("/login", authenticate);
+userRouter.post("/authenticate", authenticate);
 userRouter.post("/refreshTokens", refreshToken);
 
 // Route to register a new user
@@ -77,8 +77,8 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
   const user = userService.getUserByUsername(username);
   if (user) {
     if (await bcrypt.compare(password, user.password)) {
-      const accessToken = generateAccessToken({user: username});
-      const refreshToken = generateRefreshToken({user: username});
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
       res.status(200).json({accessToken: accessToken, refreshToken: refreshToken});
     } 
     else {
@@ -112,9 +112,10 @@ function refreshToken(req: Request, res: Response, next: NextFunction) {
   //remove the old refreshToken from the refreshTokens list
   refreshTokensArray = refreshTokensArray.filter( (c) => c !== req.body.token);
 
+  const user = userService.getUserByUsername(req.body.username);
   //generate new accessToken and refreshTokens
-  const accessToken = generateAccessToken ({user: req.body.username});
-  const refreshToken = generateRefreshToken ({user: req.body.username});
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
   
   res.json({accessToken: accessToken, refreshToken: refreshToken});
 }

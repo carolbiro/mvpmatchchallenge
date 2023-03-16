@@ -25,17 +25,87 @@
       "username": "user6",
       "password": "$2b$10$3pg/3LtK/ww1thOLmy8lDeS6lRK7Hed6ZMv.7IMNu6MV.Y6RkBqH2",
       "deposit": 155,
-      "role": "seller2",
+      "role": "seller",
       "id": "v_YzwvmbMwfmSjYW76_Rt"
+    },
+    {
+      "username": "user7",
+      "password": "$2b$10$595ckfb8wR3ZOSyNkfR0ZO3yi8XQTcO9bjxCjTVpDfKfm7uR62KdO",
+      "deposit": 155,
+      "role": "seller2",
+      "id": "NKAj2NLoE0VVmcgeAJtiy"
+    },
+    {
+      "username": "user8",
+      "password": "$2b$10$rSc5CH/HI/2Y.Ju6xnEu3utJaAs5oRFKdPQTDkHzg3US4ddcOSrES",
+      "deposit": 155,
+      "role": "seller2",
+      "id": "GECJ-PyOey-j5ACqTPysU"
+    },
+    {
+      "username": "user9",
+      "password": "$2b$10$KuOquR46HCTL8k1PHZficuu8Dum0Kbjv4A2bp9C/qQlMTBDS75LfO",
+      "deposit": 155,
+      "role": "seller2",
+      "id": "JBmYxht06RpzqgYU-fS3_"
     }
   ],
   "products": [
     {
       "id": "tPvFTiY5g3_gKq0_E2eed",
-      "productName": "Test Product 23",
-      "amountAvailable": 155,
-      "cost": 755,
+      "productName": "Test Product 233",
+      "amountAvailable": 1,
+      "cost": 75,
       "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "Yho08CrWPcuGVcbHG00-j",
+      "productName": "Test Product 11",
+      "amountAvailable": 150,
+      "cost": 75,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "lWMS6ldFHF43ndvjMuxcx",
+      "productName": "Test Product 8",
+      "amountAvailable": 150,
+      "cost": 75,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "0mjUhBtOdq9lGzTOqQfou",
+      "productName": "Test Product 7",
+      "amountAvailable": 150,
+      "cost": 75,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "KBnm-EeSqiV_fexTapS-5",
+      "productName": "Test Product 3",
+      "amountAvailable": 150,
+      "cost": 75,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "wnRmfQ8SnmsJkhXjuknZr",
+      "productName": "Test Product 33",
+      "amountAvailable": 180,
+      "cost": 50,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "vrGPwRSsDxBlBO7HH3xcA",
+      "productName": "Test Product 111",
+      "amountAvailable": 11,
+      "cost": 11,
+      "sellerId": "N0l3kg1iCaEDFPJCh1xWO"
+    },
+    {
+      "id": "wJQlosXYpPNCK3YS9jDnM",
+      "productName": "Test Product 555",
+      "amountAvailable": 55,
+      "cost": 75,
+      "sellerId": "v_YzwvmbMwfmSjYW76_Rt"
     }
   ]
 }

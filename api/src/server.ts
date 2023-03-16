@@ -5,8 +5,8 @@ import express from "express";
 import type { Request, Response, NextFunction } from 'express';
 import { whitelist } from "./_middlewares/authenticate-routes";
 
-import { userRouter } from "./users/user.controller";
-import { productRouter } from "./products/product.controller";
+import { userRouter } from "./user/user.controller";
+import { productRouter } from "./product/product.controller";
 
 const app = express();
 
@@ -40,8 +40,8 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 // User routes
-app.use("/users", userRouter);
-app.use("/products", productRouter);
+app.use("/user", userRouter);
+app.use("/product", productRouter);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
