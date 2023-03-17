@@ -3,9 +3,8 @@ import Joi from "joi";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { validateRequest } from "../_middlewares/validate-request";
-import { AuthenticatedRequest } from "../_middlewares/authenticate-routes";
 import { UserService } from "./user.service";
-import { User, UserRole } from "./user.model";
+import { User } from "./user.model";
 
 export const userRouter = express.Router();
 const userService = new UserService();
@@ -13,12 +12,9 @@ const userService = new UserService();
 userRouter.post("/", validateSchema, addUser);
 userRouter.get("/", getUsers);
 userRouter.get("/:id", getUserById);
-userRouter.put("/:id/deposit", deposit);
 userRouter.delete("/:id", deleteUser);
 userRouter.post("/authenticate", authenticate);
 userRouter.post("/refreshTokens", refreshToken);
-
-const VALID_COINS = [5,10,20,50,100];
 
 // Route to register a new user
 async function addUser(req: Request, res: Response, next: NextFunction) {
@@ -41,30 +37,6 @@ function getUserById(req: Request, res: Response, next: NextFunction) {
   const user = userService.getUserById(id);
   if (user) {
     res.status(200).json(user);
-  } else {
-    res.status(404).send("User not found");
-  }
-};
-
-// Route to deposit coins (for buyers only)
-function deposit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  if (req.user.role !== UserRole.Buyer) {
-    return res.status(403).send({ message: 'Forbiden, only users with buyer role can deposit coins!' });
-  }
-
-  const id = req.params.id;
-  if(req.user.id !== req.params.id) {
-    return res.status(403).send({ message: 'Forbiden, you can only deposit coins in your account!'})
-  }
-  
-  const { deposit } = req.body;
-  if(!VALID_COINS.includes(deposit)) {
-    return res.status(400).send({ message: 'Invalid deposit/coin denomination !'})
-  }
-  
-  const updatedUser = userService.depositCoins(id, deposit);
-  if (updatedUser) {
-    res.status(200).json(updatedUser);
   } else {
     res.status(404).send("User not found");
   }

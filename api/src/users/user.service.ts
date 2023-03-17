@@ -4,7 +4,7 @@ import { User, UserRole } from './user.model';
 const FileSync = require('lowdb/adapters/FileSync');
 const low = require('lowdb');
 const adapter = new FileSync('db.json')
-const db = low(adapter)
+const db = low(adapter);
 
 db.defaults({ users: [] }).write();
 
@@ -42,16 +42,6 @@ export class UserService {
       return undefined;
     }
     db.get('users').remove({ id: userId }).write();
-    return user.value();
-  }
-
-  depositCoins(userId: string, amount: number): User | undefined {
-    const user = db.get('users').find({ id: userId });
-    if (!user.value() || user.get('role').value() !== UserRole.Buyer) {
-      return undefined;
-    }
-    console.log('did not return');
-    user.update('deposit', (deposit:number) => deposit + amount).write();
     return user.value();
   }
 }

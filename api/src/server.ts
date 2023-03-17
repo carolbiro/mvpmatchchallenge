@@ -6,6 +6,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { whitelist } from "./_middlewares/authenticate-routes";
 import { userRouter } from "./users/user.controller";
 import { productRouter } from "./products/product.controller";
+import { transactionRouter } from "./transactions/transaction.controller";
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 // User routes
 app.use("/users", userRouter);
 app.use("/products", productRouter);
+app.use("/transactions", transactionRouter);
 
 // Error handling middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
