@@ -10,14 +10,17 @@ db.defaults({ users: [] }).write();
 
 export class UserService {
   getUsers(): User[] {
+    db.read();
     return db.get('users').value();
   }
 
   getUserById(userId: string): User | undefined {
+    db.read();
     return db.get('users').find({ id: userId }).value();
   }
 
   getUserByUsername(username: string): User | undefined {
+    db.read();
     return db.get('users').find({ username }).value();
   }
 
