@@ -3,8 +3,9 @@ import Joi from "joi";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { validateRequest } from "../_middlewares/validate-request";
+import { AuthenticatedRequest } from "../_middlewares/authenticate-routes";
 import { UserService } from "./user.service";
-import { User } from "./user.model";
+import { User, UserRole } from "./user.model";
 
 export const userRouter = express.Router();
 const userService = new UserService();
@@ -12,7 +13,7 @@ const userService = new UserService();
 userRouter.post("/", validateSchema, addUser);
 userRouter.get("/", getUsers);
 userRouter.get("/:id", getUserById);
-userRouter.put("/:id/deposit", depositCoins);
+userRouter.put("/:id/deposit", deposit);
 userRouter.delete("/:id", deleteUser);
 userRouter.post("/authenticate", authenticate);
 userRouter.post("/refreshTokens", refreshToken);
@@ -44,8 +45,17 @@ function getUserById(req: Request, res: Response, next: NextFunction) {
 };
 
 // Route to deposit coins (for buyers only)
-function depositCoins(req: Request, res: Response, next: NextFunction) {
+function deposit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  console.log('authenticated reqqqqq', req.user);
+  if (req.user.role !== UserRole.Buyer) {
+    return res.status(403).send({ message: 'Forbiden, only users with buyer role can deposit coins!' });
+  }
+
   const id = req.params.id;
+  if(req.user.id !== req.params.id) {
+    return res.status(403).send({ message: 'Forbiden, you can only deposit coins in your account!'})
+  }
+  
   const { deposit } = req.body;
   const updatedUser = userService.depositCoins(id, deposit);
   if (updatedUser) {

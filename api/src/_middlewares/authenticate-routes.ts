@@ -1,8 +1,9 @@
 import  { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
+import { User } from "../users/user.model";
 
-interface AuthenticatedRequest extends Request {
-    user?: { id: string };
+export interface AuthenticatedRequest extends Request {
+    user?: User;
   }
 
 function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -30,11 +31,11 @@ function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextF
 
   // Define the whitelist middleware function
 export function whitelist(req: Request, res: Response, next: NextFunction) {
-    const whitelistRoutes = ['/user/authenticate', '/user','/product']; // Array of whitelisted routes
+    const whitelistRoutes = ['/users/authenticate', '/users','/products']; // Array of whitelisted routes
 
     // Check if the requested route is in the whitelist
     if (whitelistRoutes.includes(req.path)) {
-        if(req.method !== 'POST' && req.path === '/user'){
+        if(req.method !== 'POST' && req.path === '/users'){
             // do nothing here and go to authentication
         } else return next(); // Skip authentication for whitelisted routes
     }
