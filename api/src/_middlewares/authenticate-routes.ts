@@ -22,7 +22,9 @@ function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextF
     // Verify the JWT
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string);
-        req.user = decoded;
+        // Remove the 'exp' field from the payload
+        const { exp, iat, ...user } = decoded;
+        req.user = user;
         next();
     } catch (err) {
         return res.status(401).json({ error: 'Invalid token' });
@@ -31,7 +33,7 @@ function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextF
 
   // Define the whitelist middleware function
 export function whitelist(req: Request, res: Response, next: NextFunction) {
-    const whitelistRoutes = ['/users/authenticate', '/users','/products']; // Array of whitelisted routes
+    const whitelistRoutes = ['/auth', '/users','/products']; // Array of whitelisted routes
 
     // Check if the requested route is in the whitelist
     if (whitelistRoutes.includes(req.path)) {

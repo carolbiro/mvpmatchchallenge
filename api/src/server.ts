@@ -4,6 +4,7 @@ import cors from "cors";
 import express from "express";
 import type { Request, Response, NextFunction } from 'express';
 import { whitelist } from "./_middlewares/authenticate-routes";
+import { authRouter } from "./auth/auth.controller";
 import { userRouter } from "./users/user.controller";
 import { productRouter } from "./products/product.controller";
 import { transactionRouter } from "./transactions/transaction.controller";
@@ -40,6 +41,7 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
 });
 
 // User routes
+app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/transactions", transactionRouter);

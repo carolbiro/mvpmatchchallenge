@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import Joi from "joi";
 import bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
 import { validateRequest } from "../_middlewares/validate-request";
 import { UserService } from "./user.service";
 import { User } from "./user.model";
@@ -13,8 +12,6 @@ userRouter.post("/", validateSchema, addUser);
 userRouter.get("/", getUsers);
 userRouter.get("/:id", getUserById);
 userRouter.delete("/:id", deleteUser);
-userRouter.post("/authenticate", authenticate);
-userRouter.post("/refreshTokens", refreshToken);
 
 // Route to register a new user
 async function addUser(req: Request, res: Response, next: NextFunction) {
@@ -57,52 +54,4 @@ function validateSchema(req, res, next) {
       role:  Joi.string().required()
   });
   validateRequest(req, next, schema);
-}
-
-async function authenticate(req: Request, res: Response, next: NextFunction) {
-  const {username, password} = req.body;
-  const user = userService.getUserByUsername(username);
-  if (user) {
-    if (await bcrypt.compare(password, user.password)) {
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
-      res.status(200).json({accessToken: accessToken, refreshToken: refreshToken});
-    } 
-    else {
-      res.status(401).send("Password Incorrect!")
-    }
-  } else {
-    res.status(404).send("User not found");
-  }
-}
-
-// accessTokens
-function generateAccessToken(user) {
-  return jwt.sign(
-    user, 
-    process.env.ACCESS_TOKEN_SECRET,
-     {expiresIn: 15*60}
-  ); 
-}
-// refreshTokens
-let refreshTokensArray = [];
-function generateRefreshToken(user) {
-  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {expiresIn: 20*60 })
-  refreshTokensArray.push(refreshToken);
-  return refreshToken;
-}
-
-function refreshToken(req: Request, res: Response, next: NextFunction) {
-  if (!refreshTokensArray.includes(req.body.token)) 
-    return res.status(400).send("Refresh Token Invalid");
-
-  //remove the old refreshToken from the refreshTokens list
-  refreshTokensArray = refreshTokensArray.filter( (c) => c !== req.body.token);
-
-  const user = userService.getUserByUsername(req.body.username);
-  //generate new accessToken and refreshTokens
-  const accessToken = generateAccessToken(user);
-  const refreshToken = generateRefreshToken(user);
-  
-  res.json({accessToken: accessToken, refreshToken: refreshToken});
 }
