@@ -18,6 +18,8 @@ userRouter.delete("/:id", deleteUser);
 userRouter.post("/authenticate", authenticate);
 userRouter.post("/refreshTokens", refreshToken);
 
+const VALID_COINS = [5,10,20,50,100];
+
 // Route to register a new user
 async function addUser(req: Request, res: Response, next: NextFunction) {
   const { username, password, role, deposit } = req.body;
@@ -46,7 +48,6 @@ function getUserById(req: Request, res: Response, next: NextFunction) {
 
 // Route to deposit coins (for buyers only)
 function deposit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  console.log('authenticated reqqqqq', req.user);
   if (req.user.role !== UserRole.Buyer) {
     return res.status(403).send({ message: 'Forbiden, only users with buyer role can deposit coins!' });
   }
@@ -57,6 +58,10 @@ function deposit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   }
   
   const { deposit } = req.body;
+  if(!VALID_COINS.includes(deposit)) {
+    return res.status(400).send({ message: 'Invalid deposit/coin denomination !'})
+  }
+  
   const updatedUser = userService.depositCoins(id, deposit);
   if (updatedUser) {
     res.status(200).json(updatedUser);
