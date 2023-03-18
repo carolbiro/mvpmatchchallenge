@@ -13,7 +13,6 @@ authRouter.post("/refreshTokens", refreshToken);
 async function authenticate(req: Request, res: Response, next: NextFunction) {
     const {username, password} = req.body;
     const user = userService.getUserByUsername(username);
-    console.log('user ::::', user);
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
         const accessToken = authService.generateAccessToken(user);

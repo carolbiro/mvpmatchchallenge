@@ -11,7 +11,7 @@ const productService = new ProductService();
 const userService = new UserService();
 
 transactionRouter.put("/deposit", deposit);
-transactionRouter.post("/:userId/buy", buy);
+transactionRouter.post("/buy", buy);
 transactionRouter.post("/reset", resetDeposit);
 
 const VALID_COINS = [5,10,20,50,100];
@@ -20,23 +20,23 @@ const VALID_COINS = [5,10,20,50,100];
 function deposit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     if (req.user.role !== UserRole.Buyer) {
-      return res.status(403).send({ message: 'Forbiden, only users with buyer role can deposit coins!' });
+      return res.status(403).send({ message: "Forbiden, only users with buyer role can deposit coins!" });
     }
 
     const { deposit } = req.body;
     if(!VALID_COINS.includes(deposit)) {
-      return res.status(400).send({ message: 'Invalid deposit/coin denomination !'})
+      return res.status(400).send({ message: "Invalid deposit/coin denomination !"})
     }
     
     const updatedDeposit = transactionService.depositCoins(req.user.id, deposit);
     if (updatedDeposit) {
       res.status(200).json(updatedDeposit);
     } else {
-      res.status(404).send("User not found");
+      res.status(404).send({ message: "User not found"});
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Internal Server Error');
+    return res.status(500).send({ message: "Internal Server Error"});
   }
 };
 
@@ -46,24 +46,24 @@ function buy(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     // Check if user is a buyer
     const user = req.user as User;
     if (user.role !== UserRole.Buyer) {
-      return res.status(401).send('Only buyers can purchase products');
+      return res.status(401).send({ message: "Only buyers can purchase products"});
     }
 
     // Validate request body
     const { productId, amount } = req.body;
     if (!productId || !amount || typeof productId !== 'string' || typeof amount !== 'number') {
-      return res.status(400).send('Invalid request body');
+      return res.status(400).send({ message: "Invalid request body"});
     }
 
     // Retrieve product from database
     const product = productService.getProductById(productId);
     if (!product) {
-      return res.status(404).send('Product not found');
+      return res.status(404).send({ message: "Product not found"});
     }
 
     // Check if requested amount of product is available
     if (product.amountAvailable < amount) {
-      return res.status(400).send('Requested amount not available');
+      return res.status(400).send({ message: "Requested amount not available"});
     }
 
     // Calculate total cost of products
@@ -72,7 +72,7 @@ function buy(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     // Check in the db if buyer has enough deposited money 
     const deposit = userService.getUserById(user.id).deposit;
     if (deposit < totalCost) {
-      return res.status(400).send('Insufficient funds');
+      return res.status(400).send({ message: "Insufficient funds"});
     }
 
     // Deduct total cost from buyer's deposited money
@@ -96,7 +96,7 @@ function buy(req: AuthenticatedRequest, res: Response, next: NextFunction) {
 
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Internal Server Error');
+    return res.status(500).send({ message: "Internal Server Error"});
   }
 }
 
@@ -106,7 +106,7 @@ function resetDeposit(req: AuthenticatedRequest, res: Response, next: NextFuncti
     // Check if user is a buyer
     const user = req.user as User;
     if (user.role !== UserRole.Buyer) {
-      return res.status(403).send({ message: 'Forbidden, only users with buyer role can reset their deposit!' });
+      return res.status(403).send({ message: "Forbidden, only users with buyer role can reset their deposit!" });
     }
 
     user.deposit = 0;
@@ -116,10 +116,10 @@ function resetDeposit(req: AuthenticatedRequest, res: Response, next: NextFuncti
     if (resetResult) {
       res.status(200).json(resetResult);
     } else {
-      res.status(404).send("User not found");
+      res.status(404).send({ message: "User not found"});
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send('Internal Server Error');
+    return res.status(500).send({ message: "Internal Server Error"});
   }
 };

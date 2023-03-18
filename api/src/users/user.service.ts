@@ -1,9 +1,10 @@
 import { nanoid } from 'nanoid';
-import { User, UserRole } from './user.model';
+import { DB_FILE } from '../utils';
+import { User } from './user.model';
 
 const FileSync = require('lowdb/adapters/FileSync');
 const low = require('lowdb');
-const adapter = new FileSync('db.json')
+const adapter = new FileSync(DB_FILE);
 const db = low(adapter);
 
 db.defaults({ users: [] }).write();

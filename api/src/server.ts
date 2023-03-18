@@ -58,7 +58,6 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     default:
         return res.status(500).json({ message: err.message });
   }
-  // res.status(500).send("Something broke!");
 });
 
 // Start server
@@ -66,3 +65,5 @@ const  port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+export default app;

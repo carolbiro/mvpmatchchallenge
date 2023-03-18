@@ -1,9 +1,10 @@
 import { nanoid } from 'nanoid';
 import { Product } from './product.model';
+import { DB_FILE } from '../utils';
 
 const FileSync = require('lowdb/adapters/FileSync');
 const low = require('lowdb');
-const adapter = new FileSync('db.json')
+const adapter = new FileSync(DB_FILE);
 const db = low(adapter)
 
 db.defaults({ products: [] }).write();
@@ -14,6 +15,7 @@ export class ProductService {
   }
 
   getProductById(productId: string): Product | undefined {
+    db.read();
     return db.get('products').find({ id: productId }).value();
   }
 

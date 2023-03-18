@@ -1,8 +1,9 @@
 import { User, UserRole } from '../users/user.model';
+import { DB_FILE } from '../utils';
 
 const FileSync = require('lowdb/adapters/FileSync');
 const low = require('lowdb');
-const adapter = new FileSync('db.json')
+const adapter = new FileSync(DB_FILE);
 const db = low(adapter);
 
 export class TransactionService {

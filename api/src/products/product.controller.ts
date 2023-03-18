@@ -58,7 +58,7 @@ function updateProduct(req: Request, res: Response, next: NextFunction) {
     if(upddateProduct) {
         res.status(200).json(upddateProduct);
     } else {
-        res.status(404).send("Product not found");
+        res.status(404).send({ message: "Product not found"});
     }
 }
 
