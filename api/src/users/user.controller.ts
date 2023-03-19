@@ -4,13 +4,15 @@ import bcrypt from "bcrypt";
 import { validateRequest } from "../_middlewares/validate-request";
 import { UserService } from "./user.service";
 import { User } from "./user.model";
+import { AuthenticatedRequest } from "../_middlewares/authenticate-routes";
 
 export const userRouter = express.Router();
 const userService = new UserService();
 
 userRouter.post("/", validateSchema, addUser);
-userRouter.get("/", getUsers);
+userRouter.get("/", getUsers); 
 userRouter.get("/:id", getUserById);
+userRouter.put("/:id", validateSchema, updateUser);
 userRouter.delete("/:id", deleteUser);
 
 // Route to register a new user
@@ -45,6 +47,20 @@ function deleteUser(req: Request, res: Response, next: NextFunction) {
   userService.deleteUser(id);
   res.status(204).send();
 };
+
+// Route to update a user
+function updateUser(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const id = req.params.id;
+  const { username, password, deposit, role } = req.body;
+  const updateResult = userService.updateUser(id, { username, password, deposit, role });
+  req.user = { username, password, deposit, role };
+
+  if (updateResult) {
+    res.status(200).json(updateResult);
+  } else {
+    res.status(404).send({ message: "User not found"});
+  }
+}
 
 function validateSchema(req, res, next) {
   const schema = Joi.object({
