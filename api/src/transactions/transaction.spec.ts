@@ -12,98 +12,206 @@ const db = low(adapter);
 const authService = new AuthService();
 
 describe('Buy Endpoint', () => {
-    beforeAll(() => {
-        // Seed the database with test data
-        const users = [
-            { id: '1', username: 'buyer1', password: 'password1', deposit: 500, role: UserRole.Buyer },
-            { id: '2', username: 'seller1', password: 'password2', deposit: 0, role: UserRole.Seller },
-        ];
-        const products = [
-            { id: '1', productName: 'Product 1', cost: 200, amountAvailable: 10, sellerId:'2' },
-            { id: '2', productName: 'Product 2', cost: 300, amountAvailable: 5, sellerId:'2' },
-        ];
-        db.set('users', users).write();
-        db.set('products', products).write();
+  beforeAll(() => {
+      // Seed the database with test data
+      const users = [
+          { id: '1', username: 'buyer1', password: 'password1', deposit: 500, role: UserRole.Buyer },
+          { id: '2', username: 'seller1', password: 'password2', deposit: 0, role: UserRole.Seller },
+      ];
+      const products = [
+          { id: '1', productName: 'Product 1', cost: 200, amountAvailable: 10, sellerId:'2' },
+          { id: '2', productName: 'Product 2', cost: 300, amountAvailable: 5, sellerId:'2' },
+      ];
+      db.set('users', users).write();
+      db.set('products', products).write();
+  });
+
+  it('db should have data', () => {
+      const users = db.get('users').value();
+      const products = db.get('products').value();
+      expect(users.length).toEqual(2);
+      expect(products.length).toEqual(2);
+  });
+
+  afterAll(() => {
+      // Clear the test database
+      db.setState({ users: [], products: []}).write();
+  });
+
+  describe('with valid data', () => {
+      let response: any;
+
+      beforeAll(async () => {
+          const buyer = db.get('users').find({ username: 'buyer1' }).value();
+          const product = db.get('products').find({ productName: 'Product 1' }).value();
+          const data = { "productId": product.id, "amount": 2 };
+          const token = authService.generateAccessToken(buyer);
+
+          // Perform the buy request
+          response = await request(app)
+          .post(`/transactions/buy`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(data);
+      });
+
+      it('should return a 200 status code', () => {
+          expect(response.status).toBe(200);
+      });
+
+      it('should return the correct total amount spent', () => {
+          const product = db.get('products').find({ productName: 'Product 1' }).value();
+          expect(response.body.totalSpent).toBe(product.cost * 2);
+      });
+
+      it('should return the correct products purchased', () => {
+          const expectedProducts: Product[] = [
+              { id: '1', productName: 'Product 1', cost: 200, amountAvailable: 8 , sellerId: '2'},
+          ];
+          expect(response.body.products).toEqual(expectedProducts);
+      });
+
+      it('should return the correct change', () => {
+          const expectedChange = [100];
+          expect(response.body.change).toEqual(expectedChange);
+      });
+  });
+
+  describe('with invalid product id', () => {
+      let response: any;
+
+      beforeAll(async () => {
+          const buyer = db.get('users').find({ username: 'buyer1' }).value();
+          const data = { productId: 'invalid', amount: 2 };
+
+          // Perform the buy request
+          response = await request(app)
+          .post(`/transactions/buy`)
+          .set('Authorization', `Bearer ${authService.generateAccessToken(buyer)}`)
+          .send(data);
+      });
+
+      it('should return a 404 status code', () => {
+          expect(response.status).toBe(404);
+      });
+
+      it('should return an error message', () => {
+          expect(response.body.message).toBe("Product not found");
+      });
+  });
+
+  describe('with insufficient quantity of product', () => {
+    let response: any;
+  
+    beforeAll(async () => {
+      const buyer = db.get('users').find({ username: 'buyer1' }).value();
+      const product = db.get('products').find({ productName: 'Product 1' }).value();
+      const data = { productId: product.id, amount: 20 };
+  
+      // Perform the buy request
+      response = await request(app)
+        .post(`/transactions/buy`)
+        .set('Authorization', `Bearer ${authService.generateAccessToken(buyer)}`)
+        .send(data);
+    });
+  
+    it('should return a 400 status code', () => {
+      expect(response.status).toBe(400);
+    });
+  
+    it('should return an error message', () => {
+      expect(response.body.message).toBe('Requested amount not available');
+    });
+  
+    it('should not change the amount available for the product', () => {
+      const product = db.get('products').find({ productName: 'Product 1' }).value();
+      expect(product.amountAvailable).toBe(10);
+    });
+  
+    it('should not deduct the funds from the buyer', () => {
+      const buyer = db.get('users').find({ username: 'buyer1' }).value();
+      expect(buyer.deposit).toBe(500);
+    });
+  });
+  
+  describe('with insufficient funds', () => {
+    let response: any;
+  
+    beforeAll(async () => {
+      const buyer = db.get('users').find({ username: 'buyer1' }).value();
+      const product = db.get('products').find({ productName: 'Product 1' }).value();
+      const data = { productId: product.id, amount: 3 };
+  
+      // Perform the buy request
+      response = await request(app)
+        .post(`/transactions/buy`)
+        .set('Authorization', `Bearer ${authService.generateAccessToken(buyer)}`)
+        .send(data);
+    });
+  
+    it('should return a 400 status code', () => {
+      expect(response.status).toBe(400);
+    });
+  
+    it('should return an error message', () => {
+      expect(response.body.message).toBe('Insufficient funds');
+    });
+  
+    it('should not change the amount available for the product', () => {
+      const product = db.get('products').find({ productName: 'Product 1' }).value();
+      expect(product.amountAvailable).toBe(10);
+    });
+  
+    it('should not deduct the funds from the buyer', () => {
+      const buyer = db.get('users').find({ username: 'buyer1' }).value();
+      expect(buyer.deposit).toBe(500);
+    });
+  });
+
+  describe('with a seller trying to buy a product', () => {
+      let response: any;
+    
+      beforeAll(async () => {
+        const seller = db.get('users').find({ username: 'seller1' }).value();
+        const product = db.get('products').find({ productName: 'Product 1' }).value();
+        const data = { productId: product.id, amount: 2 };
+    
+        // Perform the buy request
+        response = await request(app)
+          .post(`/transactions/buy`)
+          .set('Authorization', `Bearer ${authService.generateAccessToken(seller)}`)
+          .send(data);
+      });
+    
+      it('should return a 401 status code', () => {
+        expect(response.status).toBe(401);
+      });
+    
+      it('should return an error message', () => {
+        expect(response.body.message).toBe('Only buyers can purchase products');
+      });
+  });
+
+  describe('with an invalid product amount', () => {
+    let response: any;
+
+    beforeAll(async () => {
+      const buyer = db.get('users').find({ username: 'buyer1' }).value();
+      const product = db.get('products').find({ productName: 'Product 1' }).value();
+      const data = { productId: product.id, amount: 0 };
+
+      // Perform the buy request
+      response = await request(app)
+        .post(`/transactions/buy`)
+        .set('Authorization', `Bearer ${authService.generateAccessToken(buyer)}`)
+        .send(data);
     });
 
-    it('db should have data', () => {
-        const users = db.get('users').value();
-        expect(users.length).toEqual(2);
-        const products = db.get('products').value();
-        expect(products.length).toEqual(2);
+    it('should return a 400 status code', () => {
+      expect(response.status).toBe(400);
     });
 
-    afterAll(() => {
-        // Clear the test database
-        db.setState({ users: [], products: []}).write();
+    it('should return an error message', () => {
+      expect(response.body.message).toBe("Invalid request body");
     });
-
-    describe('with valid data', () => {
-        let response: any;
-
-        beforeAll(async () => {
-            const buyer = db.get('users').find({ username: 'buyer1' }).value();
-            const product = db.get('products').find({ productName: 'Product 1' }).value();
-            const data = { "productId": product.id, "amount": 2 };
-            const token = authService.generateAccessToken(buyer);
-
-            // Perform the buy request
-            response = await request(app)
-            .post(`/transactions/buy`)
-            .set('Authorization', `Bearer ${token}`)
-            .send(data);
-        });
-
-        it('should return a 200 status code', () => {
-            expect(response.status).toBe(200);
-        });
-
-        it('should return the correct total amount spent', () => {
-            const product = db.get('products').find({ productName: 'Product 1' }).value();
-            expect(response.body.totalSpent).toBe(product.cost * 2);
-        });
-
-        it('should return the correct products purchased', () => {
-            const expectedProducts: Product[] = [
-                { id: '1', productName: 'Product 1', cost: 200, amountAvailable: 8 , sellerId: '2'},
-            ];
-            expect(response.body.products).toEqual(expectedProducts);
-        });
-
-        it('should return the correct change', () => {
-            const expectedChange = [100];
-            expect(response.body.change).toEqual(expectedChange);
-        });
-    });
-
-    describe('with invalid product id', () => {
-        let response: any;
-
-        beforeAll(async () => {
-            const buyer = db.get('users').find({ username: 'buyer1' }).value();
-            const data = { productId: 'invalid', amount: 2 };
-
-            // Perform the buy request
-            response = await request(app)
-            .post(`/transactions/buy`)
-            .set('Authorization', `Bearer ${authService.generateAccessToken(buyer)}`)
-            .send(data);
-        });
-
-        it('should return a 404 status code', () => {
-            expect(response.status).toBe(404);
-        });
-
-        it('should return an error message', () => {
-            expect(response.body.message).toBe("Product not found");
-        });
-    });
-
-    // describe('with insufficient quantity of product', () => {
-    //     let response: any;
-
-    //     beforeAll(async () => {
-    //     //   const buyer = db.get('users
-    //     });
-    // });
+  });
 });
