@@ -218,60 +218,136 @@ describe('Testing ', () => {
   });
   
   describe('Deposit Endpoint', () => {
+    let response: any;
     describe('with valid data', () => {
-        let response: any;
+      beforeAll(async () => {
+          const buyer = db.get('users').find({ username: 'buyer1' }).value();
+          const data = { "deposit" : 100 };
+          const token = authService.generateAccessToken(buyer);
+
+          // Perform the deposit request
+          response = await request(app)
+          .put(`/transactions/deposit`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(data);
+      });
   
-        beforeAll(async () => {
-            const buyer = db.get('users').find({ username: 'buyer1' }).value();
-            const data = { "deposit" : 100 };
-            const token = authService.generateAccessToken(buyer);
-  
-            // Perform the deposit request
-            response = await request(app)
+      it('should return a 200 status code', () => {
+          expect(response.status).toBe(200);
+      });
+
+      it('should add the deposit amount to the user\'s deposit balance', () => {
+          db.read();
+          const updatedBuyer = db.get('users').find({ username: 'buyer1' }).value();
+          expect(updatedBuyer.deposit).toBe(600); // original deposit was 500
+      });
+    });
+
+    describe('when a user with a Seller role tries to deposit coins', () => {
+      beforeAll(async () => {
+          const seller = db.get('users').find({ username: 'seller1' }).value();
+          const data = { "deposit" : 100 };
+          const token = authService.generateAccessToken(seller);
+    
+          // Perform the deposit request
+          response = await request(app)
             .put(`/transactions/deposit`)
             .set('Authorization', `Bearer ${token}`)
             .send(data);
         });
   
-        it('should return a 200 status code', () => {
-            expect(response.status).toBe(200);
-        });
+      it('should return a 403 status code', () => {
+        expect(response.status).toBe(403);
+      });
   
-        it('should add the deposit amount to the user\'s deposit balance', () => {
-            db.read();
-            const updatedBuyer = db.get('users').find({ username: 'buyer1' }).value();
-            expect(updatedBuyer.deposit).toBe(600); // original deposit was 500
-        });
+      it('should return an error message', () => {
+        expect(response.body).toHaveProperty('message');
+        expect(response.body.message).toBe('Forbiden, only users with buyer role can deposit coins!');
+      });
+  
+      it('should not update the seller user\'s deposit', () => {
+        const seller = db.get('users').find({ username: 'seller1' }).value();
+        expect(seller.deposit).toBe(0);
+      });
+    });
+      
+    describe('with a buyer trying to deposit an invalid coin denomination', () => {
+      beforeAll(async () => {
+        const buyer = db.get('users').find({ username: 'buyer1' }).value();
+        const data = { "deposit" : 55 };
+        const token = authService.generateAccessToken(buyer);
+
+        response = await request(app)
+          .put(`/transactions/deposit`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(data);
+      });
+
+      it('should return a 400 status code', () => {
+        expect(response.status).toBe(400);
+      });
+
+      it('should not update the user\'s deposit in the database', () => {
+        const buyer = db.get('users').find({ username: 'buyer1' }).value();
+        expect(buyer.deposit).toBe(600);
+      });
     });
 
-    describe('when a user with a Seller role tries to deposit coins', () => {
-        let response: any;
-        beforeAll(async () => {
-            const seller = db.get('users').find({ username: 'seller1' }).value();
-            const data = { "deposit" : 100 };
-            const token = authService.generateAccessToken(seller);
-      
-            // Perform the deposit request
-            response = await request(app)
-              .put(`/transactions/deposit`)
-              .set('Authorization', `Bearer ${token}`)
-              .send(data);
-          });
-    
-        it('should return a 403 status code', () => {
-          expect(response.status).toBe(403);
-        });
-    
-        it('should return an error message', () => {
-          expect(response.body).toHaveProperty('message');
-          expect(response.body.message).toBe('Forbiden, only users with buyer role can deposit coins!');
-        });
-    
-        it('should not update the seller user\'s deposit', () => {
-          const seller = db.get('users').find({ username: 'seller1' }).value();
-          expect(seller.deposit).toBe(0);
-        });
+    describe('Test that the endpoint returns the correct updated deposit amount after a successful deposit', () => {
+      let buyer, token;
+      const data = { "deposit" : 100 };
+      beforeAll(async () => {
+        // Find a buyer user in the db and generate a token
+        buyer = db.get('users').find({ username: 'buyer1' }).value();
+        token = authService.generateAccessToken(buyer);
+        
+        // Perform the deposit request
+        response = await request(app)
+          .put(`/transactions/deposit`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(data);
+      });
+  
+      it('should return a 200 status code', () => {
+        expect(response.status).toBe(200);
+      });
+  
+      it('should return the updated deposit amount', () => {
+        const expectedDeposit = buyer.deposit + data.deposit;
+        expect(response.body.deposit).toBe(expectedDeposit);
+      });
+  
+      it('should update the user deposit amount in the database', () => {
+        db.read();
+        const updatedUser = db.get('users').find({ id: buyer.id }).value();
+        expect(updatedUser.deposit).toBe(buyer.deposit + data.deposit);
+      });
+    });
+
+    describe('Test that the endpoint returns the correct error response if the user tries to deposit coins into another user\'s account', () => {
+      let seller, token;
+      const data = { "deposit" : 100 };
+      beforeAll(async () => {
+        // Find a seller user in the db and generate a token
+        seller = db.get('users').find({ username: 'seller1' }).value();
+        token = authService.generateAccessToken(seller);
+        
+        // Perform the deposit request
+        response = await request(app)
+          .put(`/transactions/deposit`)
+          .set('Authorization', `Bearer ${token}`)
+          .send(data);
       });
     
+      it('should return a 403 status code', () => {
+        expect(response.status).toBe(403);
+      });
+    
+      it('should return an error message', () => {
+        expect(response.body.message).toBe('Forbiden, only users with buyer role can deposit coins!');
+      });
+    });
+    
+
   }); 
 });
