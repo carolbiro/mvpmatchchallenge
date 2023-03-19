@@ -227,7 +227,7 @@ describe('Testing ', () => {
 
           // Perform the deposit request
           response = await request(app)
-          .put(`/transactions/deposit`)
+          .post(`/transactions/deposit`)
           .set('Authorization', `Bearer ${token}`)
           .send(data);
       });
@@ -251,7 +251,7 @@ describe('Testing ', () => {
     
           // Perform the deposit request
           response = await request(app)
-            .put(`/transactions/deposit`)
+            .post(`/transactions/deposit`)
             .set('Authorization', `Bearer ${token}`)
             .send(data);
         });
@@ -278,7 +278,7 @@ describe('Testing ', () => {
         const token = authService.generateAccessToken(buyer);
 
         response = await request(app)
-          .put(`/transactions/deposit`)
+          .post(`/transactions/deposit`)
           .set('Authorization', `Bearer ${token}`)
           .send(data);
       });
@@ -303,7 +303,7 @@ describe('Testing ', () => {
         
         // Perform the deposit request
         response = await request(app)
-          .put(`/transactions/deposit`)
+          .post(`/transactions/deposit`)
           .set('Authorization', `Bearer ${token}`)
           .send(data);
       });
@@ -334,7 +334,7 @@ describe('Testing ', () => {
         
         // Perform the deposit request
         response = await request(app)
-          .put(`/transactions/deposit`)
+          .post(`/transactions/deposit`)
           .set('Authorization', `Bearer ${token}`)
           .send(data);
       });

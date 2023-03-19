@@ -10,7 +10,7 @@ const transactionService = new TransactionService();
 const productService = new ProductService();
 const userService = new UserService();
 
-transactionRouter.put("/deposit", deposit);
+transactionRouter.post("/deposit", deposit);
 transactionRouter.post("/buy", buy);
 transactionRouter.post("/reset", resetDeposit);
 
