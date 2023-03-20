@@ -34,14 +34,14 @@ async function addUser(req: Request, res: Response, next: NextFunction) {
 
 // Route to get all users
 function getUsers(req: Request, res: Response, next: NextFunction) {
-  const users = userService.getUsers();
+  const users = userService.getUsers().flatMap(item => { const {password, ...user} = item; return user;});
   res.status(200).json(users);
 };
 
 // Route to get a single user by ID
 function getUserById(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
-  const user = userService.getUserById(id);
+  const {password, ...user} = userService.getUserById(id);
   if (user) {
     res.status(200).json(user);
   } else {
