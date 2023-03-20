@@ -22,7 +22,7 @@ async function addUser(req: Request, res: Response, next: NextFunction) {
   // Check if user already exists
   const userExists = userService.getUserByUsername( username );
   if (userExists) {
-    return res.status(404).send('User already exists');
+    return res.status(404).send({"message" :'User already exists'});
   }
 
   const hashedPassword = await bcrypt.hash(req.body.password, 10);
