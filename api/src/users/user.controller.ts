@@ -17,11 +17,19 @@ userRouter.delete("/:id", deleteUser);
 
 // Route to register a new user
 async function addUser(req: Request, res: Response, next: NextFunction) {
-  const { username, password, role, deposit } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const { username, role, deposit } = req.body;
+
+  // Check if user already exists
+  const userExists = userService.getUserByUsername( username );
+  if (userExists) {
+    return res.status(404).send('User already exists');
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, 10);
   const newUser: User = { username, password: hashedPassword, deposit, role };
   const user = userService.addUser(newUser);
-  res.status(201).json(user);
+  const { password, ...newUserWithoutPassword } = user;
+  res.status(201).json(newUserWithoutPassword);
 };
 
 // Route to get all users

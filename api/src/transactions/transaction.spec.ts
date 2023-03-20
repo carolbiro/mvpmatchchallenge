@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../server';
+import { app } from '../server';
 import { DB_FILE } from '../utils';
 import { UserRole } from '../users/user.model';
 import { Product } from '../products/product.model';
@@ -347,7 +347,5 @@ describe('Testing ', () => {
         expect(response.body.message).toBe('Forbiden, only users with buyer role can deposit coins!');
       });
     });
-    
-
   }); 
 });

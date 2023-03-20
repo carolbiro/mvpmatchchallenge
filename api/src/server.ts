@@ -8,8 +8,9 @@ import { authRouter } from "./auth/auth.controller";
 import { userRouter } from "./users/user.controller";
 import { productRouter } from "./products/product.controller";
 import { transactionRouter } from "./transactions/transaction.controller";
+import { PORT } from "./utils";
 
-const app = express();
+export const app = express();
 
 // Add middleware
 app.use(express.json());
@@ -61,9 +62,12 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start server
-const  port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+const start = (port = PORT) => {
+  return app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+};
 
-export default app;
+export default ()=>{
+  return start;
+}

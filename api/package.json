@@ -17,10 +17,9 @@
   "description": "Api for mvpmatch challenge",
   "main": "src/server.ts",
   "scripts": {
-    "start": "ts-node src/server.ts",
+    "start": "nodemon  --delay 1000 src/server.ts",
     "build": "tsc",
-    "dev": "nodemon  --delay 1000 src/server.ts",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "author": "Carol Biro",
   "license": "ISC",
