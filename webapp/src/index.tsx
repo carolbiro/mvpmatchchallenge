@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import { TokenProvider } from './contexts/token.context';
+import { ProductsProvider } from './contexts/products.context';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
@@ -13,7 +14,9 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <TokenProvider>
-        <App />
+        <ProductsProvider>
+          <App />
+        </ProductsProvider>
       </TokenProvider>
     </BrowserRouter>
   </React.StrictMode>

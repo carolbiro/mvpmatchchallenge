@@ -1,10 +1,9 @@
-import { Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import ProductsPreview from '../../components/products/products.component';
-
+import { useEffect, useState, useContext } from 'react';
+import { ProductsContext } from '../../contexts/products.context';
 
 const Home = () => {
     const [products, setProducts] = useState();
+    const { setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
 
     useEffect(() => {
         const getProducts = async () => {
@@ -16,6 +15,7 @@ const Home = () => {
             });
 
             const bodyText = await response.text();
+            setCurrentProducts(JSON.parse(bodyText))
             if (response.ok) {
                 setProducts(JSON.parse(bodyText));
                 console.log(products);
@@ -32,8 +32,7 @@ const Home = () => {
 
     return (
         <div>
-            <ProductsPreview key="Products" title="Products" products={products}/>
-            <Outlet />
+            HOME COMPONENT
         </div>
     );
 };
