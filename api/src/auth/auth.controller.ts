@@ -20,10 +20,10 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
         res.status(200).json({accessToken: accessToken, refreshToken: refreshToken});
       } 
       else {
-        res.status(401).send("Password Incorrect!")
+        res.status(401).send({"message": "Password Incorrect!"});
       }
     } else {
-      res.status(404).send("User not found");
+      res.status(404).send({"message":"User not found"});
     }
   }
 
