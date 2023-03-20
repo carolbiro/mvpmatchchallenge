@@ -46,7 +46,6 @@ const SignUpForm = () => {
 
   const handleChange = (event: React.FormEvent<HTMLFormElement>) => {
     const { name, value } = event.target as HTMLInputElement;
-
     setFormFields({ ...formFields, [name]: value });
   };
 
