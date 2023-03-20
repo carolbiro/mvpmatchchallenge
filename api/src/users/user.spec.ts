@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../server';
+import { start } from '../server';
 import { DB_FILE } from '../utils';
 import { UserRole } from '../users/user.model';
 
@@ -7,6 +7,7 @@ const FileSync = require('lowdb/adapters/FileSync');
 const low = require('lowdb');
 const adapter = new FileSync(DB_FILE);
 const db = low(adapter);
+const app = start();
 
 describe('POST /users', () => {
   beforeAll(() => {
@@ -17,6 +18,7 @@ describe('POST /users', () => {
   afterAll(() => {
     // Clear the test database
     db.setState({ users: [], products: []}).write();
+    app.close();
   });
 
   it('should add a new user to the database', async () => {

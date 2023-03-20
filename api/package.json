@@ -17,7 +17,7 @@
   "description": "Api for mvpmatch challenge",
   "main": "src/server.ts",
   "scripts": {
-    "start": "nodemon  --delay 1000 src/server.ts",
+    "start": "nodemon --delay 1000 --ignore node_modules src/server.ts",
     "build": "tsc",
     "test": "jest --runInBand"
   },

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../server';
+import { start } from '../server';
 import { DB_FILE } from '../utils';
 import { UserRole } from '../users/user.model';
 import { Product } from '../products/product.model';
@@ -10,6 +10,7 @@ const low = require('lowdb');
 const adapter = new FileSync(DB_FILE);
 const db = low(adapter);
 const authService = new AuthService();
+const app = start();
 
 describe('Testing ', () => {
   beforeAll(() => {
@@ -36,6 +37,7 @@ describe('Testing ', () => {
   afterAll(() => {
       // Clear the test database
       db.setState({ users: [], products: []}).write();
+      app.close();
   });
   
   describe('Buy Endpoint', () => {

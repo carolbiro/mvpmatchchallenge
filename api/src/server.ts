@@ -62,12 +62,17 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start server
-const start = (port = PORT) => {
-  return app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-  });
-};
-
-export default ()=>{
-  return start;
+export let start;
+if(process.env.NODE_ENV === 'test') {
+  start = (port = PORT) => {
+    return app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
+  };
 }
+else {
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
+  });
+}
+
