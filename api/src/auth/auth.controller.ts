@@ -15,8 +15,9 @@ async function authenticate(req: Request, res: Response, next: NextFunction) {
     const user = userService.getUserByUsername(username);
     if (user) {
       if (await bcrypt.compare(password, user.password)) {
-        const accessToken = authService.generateAccessToken(user);
-        const refreshToken = authService.generateRefreshToken(user);
+        const {password, ...userWithoutPassword} = user; 
+        const accessToken = authService.generateAccessToken(userWithoutPassword);
+        const refreshToken = authService.generateRefreshToken(userWithoutPassword);
         res.status(200).json({accessToken: accessToken, refreshToken: refreshToken});
       } 
       else {
