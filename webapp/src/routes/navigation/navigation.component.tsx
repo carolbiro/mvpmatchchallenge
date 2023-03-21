@@ -1,6 +1,6 @@
 import { Fragment, useContext } from 'react';
 import { Outlet } from 'react-router-dom';
-import { TokenContext } from '../../contexts/token.context';
+import { AuthenticationContext } from '../../contexts/authentication.context';
 
 import {
     NavigationContainer,
@@ -12,9 +12,9 @@ import {
 
 
 const Navigation = () => {
-    const { currentToken: currentToken, setCurrentToken: setCurrentToken } = useContext(TokenContext);
+    const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
     const signOutUser = () => {
-        setCurrentToken(null);
+        setCurrentAuthentication(null);
     }
     return (
         <Fragment>
@@ -22,7 +22,7 @@ const Navigation = () => {
                 <LogoContainer to='/'> HOME </LogoContainer>
                 <NavLinks>
                     <NavLink to='/products'>PRODUCTS</NavLink>
-                    {currentToken ? (
+                    {currentAuthentication ? (
                         <NavLink as='span' onClick={signOutUser}>
                             SIGN OUT
                         </NavLink>

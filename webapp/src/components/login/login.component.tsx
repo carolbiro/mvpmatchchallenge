@@ -1,8 +1,9 @@
 import { useState, useContext } from 'react';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-import { TokenContext } from '../../contexts/token.context';
-import { LogInContainer, ButtonsContainer } from './login.styles'
+import { AuthenticationContext, Authentication, User } from '../../contexts/authentication.context';
+import { LogInContainer, ButtonsContainer } from './login.styles';
+import jwt_decode from "jwt-decode";
 
 const defaultFormFields = {
   username: '',
@@ -12,7 +13,7 @@ const defaultFormFields = {
 const SignInForm = () => {
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { username, password } = formFields;
-    const { setCurrentToken: setCurrentToken } = useContext(TokenContext);
+    const { setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     };
@@ -27,10 +28,12 @@ const SignInForm = () => {
             body: JSON.stringify({username,password}),
         });
         const bodyText = await response.text();
-        setCurrentToken(JSON.parse(bodyText));
+        const result = JSON.parse(bodyText);
+        var decoded = jwt_decode(result.accessToken) as User;
+        setCurrentAuthentication({"user" : decoded, "accessToken": result.accessToken, refreshToken: result.refreshToken });
         resetFormFields();
     } catch (error) {
-      console.log('user sign in failed', error);
+        console.log('User sign in failed', error);
     }
   };
 
