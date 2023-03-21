@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { ProductsContext } from '../../contexts/products.context';
-import { AuthenticationContext } from '../../contexts/authentication.context';
+import { AuthenticationContext, UserRole } from '../../contexts/authentication.context';
+import  Deposit from '../../components/deposit/deposit.component';
 import { HomeContainer, Title } from './home.styles';
 
 const Home = () => {
@@ -30,8 +31,6 @@ const Home = () => {
         getProducts();
     },[]);
 
-    console.log(products);
-
 
     return (
         <HomeContainer>
@@ -46,6 +45,11 @@ const Home = () => {
                     <div>
                         Role: <b>{currentAuthentication.user.role}</b>
                     </div>
+                    {(currentAuthentication.user.role ===  UserRole.Buyer &&
+                        <div>
+                        <Deposit/>    
+                        </div>
+                    )}
                 </>
             )}
         </HomeContainer>

@@ -6,10 +6,9 @@ import {
     NavigationContainer,
     NavLinks,
     NavLink,
-    LogoContainer,
+    NavDiv,
+    LeftNavLinks
 } from './navigation.styles';
-
-
 
 const Navigation = () => {
     const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
@@ -19,9 +18,12 @@ const Navigation = () => {
     return (
         <Fragment>
             <NavigationContainer>
-                <LogoContainer to='/'> HOME </LogoContainer>
+                <LeftNavLinks>
+                    <NavLink to='/'>HOME</NavLink>
+                    <NavLink to='/products'>PRODUCTS</NavLink> 
+                </LeftNavLinks>
                 <NavLinks>
-                    <NavLink to='/products'>PRODUCTS</NavLink>
+                    <NavDiv>{currentAuthentication ? `BALANCE: ${currentAuthentication.user.deposit} cents` : ''}</NavDiv> 
                     {currentAuthentication ? (
                         <NavLink as='span' onClick={signOutUser}>
                             SIGN OUT
