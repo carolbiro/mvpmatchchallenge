@@ -15,13 +15,12 @@ const ProductsPreview = ({ title, products }: ProductsPreviewProps) => {
     return (
         <ProductsPreviewContainer>
             <h2>
-                <Title to={title}>{title}</Title>
+                <Title to={''}>{title}</Title>
             </h2>
             <Preview>
-                {products && products.filter((_: any, idx: number) => idx < 4)
-                    .map((product: any) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
+                {products && products.map((product: any) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
             </Preview>
         </ProductsPreviewContainer>
     );

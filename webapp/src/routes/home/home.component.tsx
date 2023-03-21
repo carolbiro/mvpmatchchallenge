@@ -1,9 +1,12 @@
 import { useEffect, useState, useContext } from 'react';
 import { ProductsContext } from '../../contexts/products.context';
+import { AuthenticationContext } from '../../contexts/authentication.context';
+import { HomeContainer, Title } from './home.styles';
 
 const Home = () => {
     const [products, setProducts] = useState();
     const { setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
+    const { currentAuthentication: currentAuthentication } = useContext(AuthenticationContext);
 
     useEffect(() => {
         const getProducts = async () => {
@@ -31,9 +34,21 @@ const Home = () => {
 
 
     return (
-        <div>
-            HOME COMPONENT
-        </div>
+        <HomeContainer>
+            <h2>
+                <Title to={''}>Home</Title>
+            </h2>
+            {(currentAuthentication &&
+                <>
+                    <div>
+                        Logged in as: <b>{currentAuthentication.user.username}</b>.
+                    </div>
+                    <div>
+                        Role: <b>{currentAuthentication.user.role}</b>
+                    </div>
+                </>
+            )}
+        </HomeContainer>
     );
 };
 
