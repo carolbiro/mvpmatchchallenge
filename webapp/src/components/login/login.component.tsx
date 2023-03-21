@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { AuthenticationContext, Authentication, User } from '../../contexts/authentication.context';
@@ -17,28 +18,30 @@ const SignInForm = () => {
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     };
-
+    const navigate = useNavigate();
+    
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-        const response = await fetch('/auth', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username,password}),
-        });
-        const bodyText = await response.text();
-        const result = JSON.parse(bodyText);
-        var decoded = jwt_decode(result.accessToken) as User;
-        setCurrentAuthentication({"user" : decoded, "accessToken": result.accessToken, refreshToken: result.refreshToken });
-        resetFormFields();
+      const response = await fetch('/auth', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({username,password}),
+      });
+      const bodyText = await response.text();
+      const result = JSON.parse(bodyText);
+      var decoded = jwt_decode(result.accessToken) as User;
+      setCurrentAuthentication({"user" : decoded, "accessToken": result.accessToken, refreshToken: result.refreshToken });
+      resetFormFields();
+      navigate('/');
     } catch (error) {
         console.log('User sign in failed', error);
     }
   };
 
   const handleChange = (event: React.FormEvent<HTMLFormElement>) => {
-      const { name, value } = event.target as HTMLInputElement;
+    const { name, value } = event.target as HTMLInputElement;
     setFormFields({ ...formFields, [name]: value });
   };
 

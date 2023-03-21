@@ -1,5 +1,5 @@
 import { Fragment, useContext } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet , useNavigate } from 'react-router-dom';
 import { AuthenticationContext } from '../../contexts/authentication.context';
 
 import {
@@ -12,8 +12,10 @@ import {
 
 const Navigation = () => {
     const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
+    const navigate = useNavigate();
     const signOutUser = () => {
         setCurrentAuthentication(null);
+        navigate("/");
     }
     return (
         <Fragment>

@@ -1,11 +1,11 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { ProductsContext } from '../../contexts/products.context';
 import { AuthenticationContext, UserRole } from '../../contexts/authentication.context';
-import  Deposit from '../../components/deposit/deposit.component';
+import Deposit from '../../components/deposit/deposit.component';
+import ProductInput from '../../components/product-input/product-input.component';
 import { HomeContainer, Title } from './home.styles';
 
 const Home = () => {
-    const [products, setProducts] = useState();
     const { setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
     const { currentAuthentication: currentAuthentication } = useContext(AuthenticationContext);
 
@@ -19,13 +19,13 @@ const Home = () => {
             });
 
             const bodyText = await response.text();
-            setCurrentProducts(JSON.parse(bodyText))
+            const result = JSON.parse(bodyText);
             if (response.ok) {
-                setProducts(JSON.parse(bodyText));
-                console.log(products);
+                await setCurrentProducts(result);
             } else {
-                const error = JSON.parse(bodyText);
-                console.log(`Failed to load products: ${error.message}`);
+                const errorMessage = `Failed to load products: ${result.message}`;
+                alert(errorMessage);
+                console.log(errorMessage);
             }
         }
         getProducts();
@@ -46,9 +46,14 @@ const Home = () => {
                     </div>
                     {(currentAuthentication.user.role ===  UserRole.Buyer &&
                         <div>
-                        <Deposit/>    
+                        <Deposit />    
                         </div>
                     )}
+                {(currentAuthentication.user.role === UserRole.Seller &&
+                    <div>
+                        <ProductInput />
+                    </div>
+                )}
                 </>
             )}
         </HomeContainer>

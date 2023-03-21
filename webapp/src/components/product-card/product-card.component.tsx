@@ -33,7 +33,6 @@ const ProductCard = ({ product }: any) => {
         const bodyText = await response.text();
         const result = JSON.parse(bodyText);
         if (response.ok) {
-
             // update the products context
             const updatedProducts = currentProducts.map(item => {
                 if (item.id === id) {
@@ -41,17 +40,34 @@ const ProductCard = ({ product }: any) => {
                     return item;
                 }
                 return item;
-            }) as Product[]
+            }) as Product[];
             await setCurrentProducts(updatedProducts);
             const auth = currentAuthentication as Authentication;
             const newBalance = auth.user.deposit - parseFloat(result.totalSpent);
             const newUser = { ...auth.user, "deposit": newBalance };
-            await setCurrentAuthentication({...auth, user: newUser})
+            await setCurrentAuthentication({ ...auth, user: newUser });
+            alert(`${amount} of \"${productName}\" has been purchased!\nTotal spent: ${result.totalSpent} cents.\nYour change is: ${JSON.stringify(result.change)}`);
         } else {
-            const error = `Failed to load products: ${result.message}`;
-            console.log(`Failed to load products: ${error}`);
-            alert(error);
+            alert(`Failed to load products: ${result.message}`);
         }
+    }
+
+    const handleDelete = async () => {
+        await fetch(`/products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${currentAuthentication?.accessToken}`
+            },
+            body: JSON.stringify({
+                "productId": id,
+                "amount": parseFloat(amount)
+            })
+        });
+
+        // update the products context
+        const updatedProducts = currentProducts.filter(item => item.id !== id) as Product[];
+        await setCurrentProducts(updatedProducts);
     }
 
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
@@ -72,6 +88,11 @@ const ProductCard = ({ product }: any) => {
                         </Button>
                         <input type="text" name="amount" onChange={handleChange} value={amount} />
                     </>
+                )}
+                {currentAuthentication && currentAuthentication.user.role === UserRole.Seller && (
+                    <Button onClick={handleDelete} buttonType={BUTTON_TYPE_CLASSES.inverted}>
+                        Delete
+                    </Button>
                 )}
             </ProductCardWraper>
         </ProductCardContainer>
