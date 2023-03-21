@@ -20,7 +20,7 @@ productRouter.delete("/:id", deleteProduct);
 function addProduct(req: Request, res: Response, next: NextFunction) {
     const user:User = getUserFromAuthHeader(req);
     if(user.role !== UserRole.Seller) {
-        return res.status(403).send("Forbidden, only sellers can add products!");
+        return res.status(403).send({"message":"Forbidden, only sellers can add products!"});
     }
     const { productName, amountAvailable, cost } = req.body;
     const newProduct: Product = { productName, amountAvailable, cost, sellerId: user.id};
@@ -70,11 +70,11 @@ function deleteProduct(req: Request, res: Response, next: NextFunction) {
 
     // only the seller can update the product
     if(product.sellerId !== user.id){
-        return res.status(403).send("Forbidden, product can be deleted only by its seller!");
+        return res.status(403).send({"message":"Forbidden, product can be deleted only by its seller!"});
     }
 
     productService.deleteProduct(id);
-    res.status(204).send("Product was successfully deleted!");
+    res.status(204).send({"message":"Product was successfully deleted!"});
 }
 
 function validateSchema(req, res, next) {

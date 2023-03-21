@@ -45,7 +45,7 @@ function getUserById(req: Request, res: Response, next: NextFunction) {
   if (user) {
     res.status(200).json(user);
   } else {
-    res.status(404).send("User not found");
+    res.status(404).send({"message":"User not found."});
   }
 };
 
@@ -53,7 +53,7 @@ function getUserById(req: Request, res: Response, next: NextFunction) {
 function deleteUser(req: Request, res: Response, next: NextFunction) {
   const id = req.params.id;
   userService.deleteUser(id);
-  res.status(204).send();
+  res.status(204).send({"message":"User was successfully deleted."});;
 };
 
 // Route to update a user
@@ -66,7 +66,7 @@ function updateUser(req: AuthenticatedRequest, res: Response, next: NextFunction
   if (updateResult) {
     res.status(200).json(updateResult);
   } else {
-    res.status(404).send({ message: "User not found"});
+    res.status(404).send({ message: "User not found."});
   }
 }
 
