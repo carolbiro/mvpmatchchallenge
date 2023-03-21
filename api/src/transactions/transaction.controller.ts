@@ -28,9 +28,10 @@ function deposit(req: AuthenticatedRequest, res: Response, next: NextFunction) {
       return res.status(400).send({ message: "Invalid deposit/coin denomination !"})
     }
     
-    const updatedDeposit = transactionService.depositCoins(req.user.id, deposit);
-    if (updatedDeposit) {
-      res.status(200).json(updatedDeposit);
+    const userWithUpdatedDeposit = transactionService.depositCoins(req.user.id, deposit);
+    if (userWithUpdatedDeposit) {
+      const { password, ...userWithoutPassword} = userWithUpdatedDeposit;
+      res.status(200).json(userWithoutPassword);
     } else {
       res.status(404).send({ message: "User not found"});
     }
@@ -114,7 +115,8 @@ function resetDeposit(req: AuthenticatedRequest, res: Response, next: NextFuncti
     req.user = user;
 
     if (resetResult) {
-      res.status(200).json(resetResult);
+      const {password, ...userWithoutPassword} = resetResult;
+      res.status(200).json(userWithoutPassword);
     } else {
       res.status(404).send({ message: "User not found"});
     }
