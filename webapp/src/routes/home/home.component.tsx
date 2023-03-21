@@ -31,7 +31,6 @@ const Home = () => {
         getProducts();
     },[]);
 
-
     return (
         <HomeContainer>
             <h2>

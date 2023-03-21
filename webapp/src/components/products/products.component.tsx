@@ -1,4 +1,5 @@
 import ProductCard from '../product-card/product-card.component';
+import { Product } from '../../contexts/products.context';
 
 import {
     ProductsPreviewContainer,
@@ -8,7 +9,7 @@ import {
 
 interface ProductsPreviewProps {
     title: string;
-    products: [] | undefined
+    products: Product[] | undefined
 }
 
 const ProductsPreview = ({ title, products }: ProductsPreviewProps) => {
@@ -18,7 +19,7 @@ const ProductsPreview = ({ title, products }: ProductsPreviewProps) => {
                 <Title to={''}>{title}</Title>
             </h2>
             <Preview>
-                {products && products.map((product: any) => (
+                {products && products.map((product: Product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}
             </Preview>
