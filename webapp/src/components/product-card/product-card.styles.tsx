@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ProductCartContainer = styled.div`
+export const ProductCardContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ export const ProductCartContainer = styled.div`
   }
 `;
 
-export const Footer = styled.div`
+export const ProductCardWraper = styled.div`
   width: 100%;
   display: flex;
   margin-bottom:20px;

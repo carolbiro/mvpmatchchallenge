@@ -4,8 +4,8 @@ import { AuthenticationContext, UserRole, Authentication } from '../../contexts/
 import { ProductsContext, Product } from '../../contexts/products.context';
 
 import {
-    ProductCartContainer,
-    Footer,
+    ProductCardContainer,
+    ProductCardWraper,
     Name,
     Price,
     Available
@@ -60,8 +60,8 @@ const ProductCard = ({ product }: any) => {
     }
 
     return (
-        <ProductCartContainer>
-            <Footer>
+        <ProductCardContainer>
+            <ProductCardWraper>
                 <Name>{productName}</Name>
                 <Available>{amountAvailable} available</Available>
                 <Price>at {cost} cents</Price>
@@ -73,8 +73,8 @@ const ProductCard = ({ product }: any) => {
                         <input type="text" name="amount" onChange={handleChange} value={amount} />
                     </>
                 )}
-            </Footer>
-        </ProductCartContainer>
+            </ProductCardWraper>
+        </ProductCardContainer>
     );
 };
 
