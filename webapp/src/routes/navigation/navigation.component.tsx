@@ -15,6 +15,8 @@ const Navigation = () => {
     const navigate = useNavigate();
     const signOutUser = () => {
         setCurrentAuthentication(null);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         navigate("/");
     }
     return (

@@ -6,6 +6,11 @@ import { AuthenticationContext, Authentication, User } from '../../contexts/auth
 import { LogInContainer, ButtonsContainer } from './login.styles';
 import jwt_decode from "jwt-decode";
 
+export interface IAuthResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
 const defaultFormFields = {
   username: '',
   password: '',
@@ -29,10 +34,13 @@ const SignInForm = () => {
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({username,password}),
       });
-      const bodyText = await response.text();
-      const result = JSON.parse(bodyText);
-      var decoded = jwt_decode(result.accessToken) as User;
-      setCurrentAuthentication({"user" : decoded, "accessToken": result.accessToken, refreshToken: result.refreshToken });
+
+      const authResponse: IAuthResponse = await response.json();
+      localStorage.setItem('accessToken', authResponse.accessToken);
+      localStorage.setItem('refreshToken', authResponse.refreshToken);
+
+      var decoded = jwt_decode(authResponse.accessToken) as User;
+      setCurrentAuthentication({"user" : decoded, "accessToken": authResponse.accessToken, refreshToken: authResponse.refreshToken });
       resetFormFields();
       navigate('/');
     } catch (error) {
