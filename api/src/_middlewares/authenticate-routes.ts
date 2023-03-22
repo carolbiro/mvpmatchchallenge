@@ -33,7 +33,7 @@ function authenticateToken(req: AuthenticatedRequest, res: Response, next: NextF
 
   // Define the whitelist middleware function
 export function whitelist(req: Request, res: Response, next: NextFunction) {
-    const whitelistRoutes = ['/auth', '/users','/products']; // Array of whitelisted routes
+    const whitelistRoutes = ['/auth', '/users','/products','/auth/refreshTokens']; // Array of whitelisted routes
 
     // Check if the requested route is in the whitelist
     if (whitelistRoutes.includes(req.path)) {
