@@ -30,8 +30,8 @@ const SignInForm = () => {
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({username,password}),
       });
-
       const res = await response.json();
+      
       if (!response.ok) {
         throw new ApiError(`${res.message}`);
       }

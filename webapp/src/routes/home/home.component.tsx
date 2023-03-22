@@ -50,7 +50,7 @@ const Home = () => {
                     </div>
                     {(currentAuthentication.user.role ===  UserRole.Buyer &&
                         <div>
-                        <Deposit />    
+                            <Deposit />    
                         </div>
                     )}
                 {(currentAuthentication.user.role === UserRole.Seller &&

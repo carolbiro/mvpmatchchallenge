@@ -43,7 +43,6 @@ const ProductInput = () => {
                 },
                 body: JSON.stringify(productToAdd)
             });
-    
             const res = await response.json();
     
             if (!response.ok) {
@@ -60,6 +59,7 @@ const ProductInput = () => {
                 alert(error.message);
         }
     };
+
     return (
         <ProductInputContainer>
             <h2>

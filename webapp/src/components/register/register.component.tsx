@@ -28,19 +28,14 @@ const SignUpForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          username,
-          password,
-          role,
-          deposit,
-        }),
+        body: JSON.stringify({username, password, role, deposit }),
       });
-  
       const res = await response.json();
   
       if (!response.ok) {
           throw new ApiError(`${res.message}`);
       }
+      
       resetFormFields();
       alert('User registered successfully!');
     } catch (error) {

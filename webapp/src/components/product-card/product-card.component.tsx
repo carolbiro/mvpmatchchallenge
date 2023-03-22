@@ -48,8 +48,7 @@ const ProductCard = ({ product }: any) => {
             await setCurrentProducts(updatedProducts);
             const auth = currentAuthentication as Authentication;
             const newBalance = auth.user.deposit - parseFloat(res.totalSpent);
-            const newUser = { ...auth.user, "deposit": newBalance };
-            await setCurrentAuthentication({ ...auth, user: newUser });
+            await setCurrentAuthentication({ ...auth, user: { ...auth.user, "deposit": newBalance }});
             alert(`${amount} of \"${productName}\" has been purchased!\nTotal spent: ${res.totalSpent} cents.\nYour change is: ${JSON.stringify(res.change)}`);
         } catch (error) {
             console.error(error);

@@ -17,8 +17,7 @@ const Deposit = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentAuthentication?.accessToken}`
         }
-    }
-    ) => {
+    }) => {
         try {
             const response = await fetch(`/transactions/${transactionMethod}`, requestOptions);
             const res = await response.json();
