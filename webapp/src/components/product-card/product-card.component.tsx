@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react';
+import { ApiError } from '../../App';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 import { AuthenticationContext, UserRole, Authentication } from '../../contexts/authentication.context';
 import { ProductsContext, Product } from '../../contexts/products.context';
@@ -18,21 +19,24 @@ const ProductCard = ({ product }: any) => {
     const [amount, setAmount] = useState('1');
 
     const handleBuy = async () => {
-        const response = await fetch('/transactions/buy', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-            },
-            body: JSON.stringify({
-                "productId": id,
-                "amount": parseFloat(amount)
-            })
-        });
+        try {
+            const response = await fetch('/transactions/buy', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentAuthentication?.accessToken}`
+                },
+                body: JSON.stringify({
+                    "productId": id,
+                    "amount": parseFloat(amount)
+                })
+            });
+            const res = await response.json();
 
-        const bodyText = await response.text();
-        const result = JSON.parse(bodyText);
-        if (response.ok) {
+            if (!response.ok) {
+                throw new ApiError(`${res.message}`);
+            }
+
             // update the products context
             const updatedProducts = currentProducts.map(item => {
                 if (item.id === id) {
@@ -43,31 +47,35 @@ const ProductCard = ({ product }: any) => {
             }) as Product[];
             await setCurrentProducts(updatedProducts);
             const auth = currentAuthentication as Authentication;
-            const newBalance = auth.user.deposit - parseFloat(result.totalSpent);
+            const newBalance = auth.user.deposit - parseFloat(res.totalSpent);
             const newUser = { ...auth.user, "deposit": newBalance };
             await setCurrentAuthentication({ ...auth, user: newUser });
-            alert(`${amount} of \"${productName}\" has been purchased!\nTotal spent: ${result.totalSpent} cents.\nYour change is: ${JSON.stringify(result.change)}`);
-        } else {
-            alert(`Failed to load products: ${result.message}`);
+            alert(`${amount} of \"${productName}\" has been purchased!\nTotal spent: ${res.totalSpent} cents.\nYour change is: ${JSON.stringify(res.change)}`);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof ApiError)
+                alert(error.message);
         }
     }
 
     const handleDelete = async () => {
-        await fetch(`/products/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-            },
-            body: JSON.stringify({
-                "productId": id,
-                "amount": parseFloat(amount)
-            })
-        });
+        try {
+            await fetch(`/products/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${currentAuthentication?.accessToken}`
+                },
+            });
 
-        // update the products context
-        const updatedProducts = currentProducts.filter(item => item.id !== id) as Product[];
-        await setCurrentProducts(updatedProducts);
+            // update the products context
+            const updatedProducts = currentProducts.filter(item => item.id !== id) as Product[];
+            await setCurrentProducts(updatedProducts);
+            alert(`\"${productName}\" has been deleted!`);
+        } catch (error) {
+            console.log(error);
+            alert(error);
+        }
     }
 
     const handleChange = (event: React.FormEvent<HTMLInputElement>) => {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ApiError } from '../../App';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 
@@ -21,27 +22,33 @@ const SignUpForm = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const response = await fetch('/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username,
-        password,
-        role,
-        deposit,
-      }),
-    });
-
-    if (response.ok) {
+    try{        
+      const response = await fetch('/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          role,
+          deposit,
+        }),
+      });
+  
+      const res = await response.json();
+  
+      if (!response.ok) {
+          throw new ApiError(`${res.message}`);
+      }
+      resetFormFields();
       alert('User registered successfully!');
-    } else {
-      const bodyText = await response.text();
-      const error = JSON.parse(bodyText);
-      alert(`Error registering user: ${error.message}`);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ApiError)
+          alert(error.message);
     }
+
   };
 
   const handleChange = (event: React.FormEvent<HTMLFormElement>) => {

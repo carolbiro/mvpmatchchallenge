@@ -1,15 +1,11 @@
 import { useState, useContext } from 'react';
+import { ApiError } from '../../App';
 import { useNavigate } from 'react-router-dom';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { AuthenticationContext, Authentication, User } from '../../contexts/authentication.context';
 import { LogInContainer, ButtonsContainer } from './login.styles';
 import jwt_decode from "jwt-decode";
-
-export interface IAuthResponse {
-  accessToken: string;
-  refreshToken: string;
-}
 
 const defaultFormFields = {
   username: '',
@@ -35,16 +31,22 @@ const SignInForm = () => {
           body: JSON.stringify({username,password}),
       });
 
-      const authResponse: IAuthResponse = await response.json();
-      localStorage.setItem('accessToken', authResponse.accessToken);
-      localStorage.setItem('refreshToken', authResponse.refreshToken);
+      const res = await response.json();
+      if (!response.ok) {
+        throw new ApiError(`${res.message}`);
+      }
 
-      var decoded = jwt_decode(authResponse.accessToken) as User;
-      setCurrentAuthentication({"user" : decoded, "accessToken": authResponse.accessToken, refreshToken: authResponse.refreshToken });
+      localStorage.setItem('accessToken', res.accessToken);
+      localStorage.setItem('refreshToken', res.refreshToken);
+
+      var decoded = jwt_decode(res.accessToken) as User;
+      setCurrentAuthentication({"user" : decoded, "accessToken": res.accessToken, refreshToken: res.refreshToken });
       resetFormFields();
       navigate('/');
     } catch (error) {
-        console.log('User sign in failed', error);
+      console.error(error);
+      if (error instanceof ApiError)
+          alert(error.message);
     }
   };
 

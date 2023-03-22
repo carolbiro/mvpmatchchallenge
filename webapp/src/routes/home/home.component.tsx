@@ -1,4 +1,5 @@
 import { useEffect, useContext } from 'react';
+import { ApiError } from '../../App';
 import { ProductsContext } from '../../contexts/products.context';
 import { AuthenticationContext, UserRole } from '../../contexts/authentication.context';
 import Deposit from '../../components/deposit/deposit.component';
@@ -11,21 +12,24 @@ const Home = () => {
 
     useEffect(() => {
         const getProducts = async () => {
-            const response = await fetch('/products', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            try {    
+                const response = await fetch('/products', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const res = await response.json();
 
-            const bodyText = await response.text();
-            const result = JSON.parse(bodyText);
-            if (response.ok) {
-                await setCurrentProducts(result);
-            } else {
-                const errorMessage = `Failed to load products: ${result.message}`;
-                alert(errorMessage);
-                console.log(errorMessage);
+                if (!response.ok) {
+                    throw new ApiError(`${res.message}`);
+                }
+
+                await setCurrentProducts(res);
+            } catch (error) {
+                console.error(error);
+                if (error instanceof ApiError)
+                    alert(error.message);
             }
         }
         getProducts();

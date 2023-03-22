@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { ApiError } from '../../App';
 import { AuthenticationContext, User, Authentication } from '../../contexts/authentication.context';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
@@ -18,17 +19,21 @@ const Deposit = () => {
         }
     }
     ) => {
-        const response = await fetch(`/transactions/${transactionMethod}`, requestOptions);
-        const bodyText = await response.text();
-        const result = JSON.parse(bodyText) as User;
-        setDeposit('');
-        if (response.ok) {
-            // alert('Deposit added successfully!');
-            const updatedAuth = { ...currentAuthentication, user: result } as Authentication;
+        try {
+            const response = await fetch(`/transactions/${transactionMethod}`, requestOptions);
+            const res = await response.json();
+
+            if (!response.ok) {
+                throw new ApiError(`${res.message}`);
+            }
+
+            setDeposit('');
+            const updatedAuth = { ...currentAuthentication, user: res } as Authentication;
             setCurrentAuthentication(updatedAuth);
-        } else {
-            const error = JSON.parse(bodyText);
-            alert(`Error : ${error.message}`);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof ApiError)
+                alert(error.message);
         }
     }
 
