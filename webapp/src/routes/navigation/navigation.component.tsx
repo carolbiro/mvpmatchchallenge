@@ -1,6 +1,6 @@
 import { Fragment, useContext } from 'react';
 import { Outlet , useNavigate } from 'react-router-dom';
-import { AuthenticationContext } from '../../contexts/authentication.context';
+import { UserContext } from '../../contexts/user.context';
 
 import {
     NavigationContainer,
@@ -11,10 +11,10 @@ import {
 } from './navigation.styles';
 
 const Navigation = () => {
-    const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
+    const { currentUser: currentUser, setCurrentUser: setCurrentUser } = useContext(UserContext);
     const navigate = useNavigate();
     const signOutUser = () => {
-        setCurrentAuthentication(null);
+        setCurrentUser(null);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         navigate("/");
@@ -27,8 +27,8 @@ const Navigation = () => {
                     <NavLink to='/products'>PRODUCTS</NavLink> 
                 </LeftNavLinks>
                 <NavLinks>
-                    <NavDiv>{currentAuthentication ? `BALANCE: ${currentAuthentication.user.deposit} cents` : ''}</NavDiv> 
-                    {currentAuthentication ? (
+                    <NavDiv>{currentUser ? `BALANCE: ${currentUser.deposit} cents` : ''}</NavDiv> 
+                    {currentUser ? (
                         <NavLink as='span' onClick={signOutUser}>
                             SIGN OUT
                         </NavLink>

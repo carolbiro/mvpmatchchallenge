@@ -1,59 +1,31 @@
-import { useEffect, useContext } from 'react';
-import { ApiError } from '../../App';
-import { ProductsContext } from '../../contexts/products.context';
-import { AuthenticationContext, UserRole } from '../../contexts/authentication.context';
+import { useContext } from 'react';
+import { UserContext, UserRole } from '../../contexts/user.context';
 import Deposit from '../../components/deposit/deposit.component';
 import ProductInput from '../../components/product-input/product-input.component';
 import { HomeContainer, Title } from './home.styles';
 
 const Home = () => {
-    const { setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
-    const { currentAuthentication: currentAuthentication } = useContext(AuthenticationContext);
-
-    useEffect(() => {
-        const getProducts = async () => {
-            try {    
-                const response = await fetch('/products', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const res = await response.json();
-
-                if (!response.ok) {
-                    throw new ApiError(`${res.message}`);
-                }
-
-                await setCurrentProducts(res);
-            } catch (error) {
-                console.error(error);
-                if (error instanceof ApiError)
-                    alert(error.message);
-            }
-        }
-        getProducts();
-    },[]);
+    const { currentUser: currentUser } = useContext(UserContext);
 
     return (
         <HomeContainer>
             <h2>
                 <Title to={''}>Home</Title>
             </h2>
-            {(currentAuthentication &&
+            {(currentUser &&
                 <>
                     <div>
-                        Logged in as: <b>{currentAuthentication.user.username}</b>.
+                    Logged in as: <b>{currentUser.username}</b>.
                     </div>
                     <div>
-                        Role: <b>{currentAuthentication.user.role}</b>
+                    Role: <b>{currentUser.role}</b>
                     </div>
-                    {(currentAuthentication.user.role ===  UserRole.Buyer &&
+                {(currentUser.role === UserRole.Buyer &&
                         <div>
                             <Deposit />    
                         </div>
                     )}
-                {(currentAuthentication.user.role === UserRole.Seller &&
+                {(currentUser.role === UserRole.Seller &&
                     <div>
                         <ProductInput />
                     </div>

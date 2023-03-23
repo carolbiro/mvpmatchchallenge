@@ -1,9 +1,9 @@
 import { useState, useContext } from 'react';
-import { ApiError } from '../../App';
+import { ApiError } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-import { AuthenticationContext, Authentication, User } from '../../contexts/authentication.context';
+import { UserContext, User } from '../../contexts/user.context';
 import { LogInContainer, ButtonsContainer } from './login.styles';
 import jwt_decode from "jwt-decode";
 
@@ -13,13 +13,13 @@ const defaultFormFields = {
 };
 
 const SignInForm = () => {
-    const [formFields, setFormFields] = useState(defaultFormFields);
-    const { username, password } = formFields;
-    const { setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
-    const resetFormFields = () => {
-        setFormFields(defaultFormFields);
-    };
-    const navigate = useNavigate();
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { username, password } = formFields;
+  const { setCurrentUser: setCurrentUser } = useContext(UserContext);
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+  const navigate = useNavigate();
     
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,7 +31,7 @@ const SignInForm = () => {
           body: JSON.stringify({username,password}),
       });
       const res = await response.json();
-      
+
       if (!response.ok) {
         throw new ApiError(`${res.message}`);
       }
@@ -40,7 +40,7 @@ const SignInForm = () => {
       localStorage.setItem('refreshToken', res.refreshToken);
 
       var decoded = jwt_decode(res.accessToken) as User;
-      setCurrentAuthentication({"user" : decoded, "accessToken": res.accessToken, refreshToken: res.refreshToken });
+      setCurrentUser(decoded);
       resetFormFields();
       navigate('/');
     } catch (error) {

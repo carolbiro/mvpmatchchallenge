@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
-import { ApiError } from '../../App';
+import { ApiError, fetchWithAuth } from '../../services/api';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
-import { AuthenticationContext, UserRole, Authentication } from '../../contexts/authentication.context';
+import { UserContext, UserRole, User } from '../../contexts/user.context';
 import { ProductsContext, Product } from '../../contexts/products.context';
 
 import {
@@ -13,19 +13,15 @@ import {
 } from './product-card.styles';
 
 const ProductCard = ({ product }: any) => {
-    const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
+    const { currentUser: currentUser, setCurrentUser: setCurrentUser } = useContext(UserContext);
     const { currentProducts: currentProducts, setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
     const { id, productName, cost, amountAvailable } = product;
     const [amount, setAmount] = useState('1');
 
     const handleBuy = async () => {
         try {
-            const response = await fetch('/transactions/buy', {
+            const response = await fetchWithAuth('/transactions/buy', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-                },
                 body: JSON.stringify({
                     "productId": id,
                     "amount": parseFloat(amount)
@@ -46,9 +42,9 @@ const ProductCard = ({ product }: any) => {
                 return item;
             }) as Product[];
             await setCurrentProducts(updatedProducts);
-            const auth = currentAuthentication as Authentication;
-            const newBalance = auth.user.deposit - parseFloat(res.totalSpent);
-            await setCurrentAuthentication({ ...auth, user: { ...auth.user, "deposit": newBalance }});
+            const user = currentUser as User;
+            const newBalance = user.deposit - parseFloat(res.totalSpent);
+            await setCurrentUser({...user, "deposit": newBalance });
             alert(`${amount} of \"${productName}\" has been purchased!\nTotal spent: ${res.totalSpent} cents.\nYour change is: ${JSON.stringify(res.change)}`);
         } catch (error) {
             console.error(error);
@@ -59,13 +55,7 @@ const ProductCard = ({ product }: any) => {
 
     const handleDelete = async () => {
         try {
-            await fetch(`/products/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-                },
-            });
+            await fetchWithAuth(`/products/${id}`, { method: 'DELETE'});
 
             // update the products context
             const updatedProducts = currentProducts.filter(item => item.id !== id) as Product[];
@@ -88,7 +78,7 @@ const ProductCard = ({ product }: any) => {
                 <Name>{productName}</Name>
                 <Available>{amountAvailable} available</Available>
                 <Price>at {cost} cents</Price>
-                {currentAuthentication && currentAuthentication.user.role === UserRole.Buyer && (
+                {currentUser && currentUser.role === UserRole.Buyer && (
                     <>
                         <Button onClick={handleBuy} buttonType={BUTTON_TYPE_CLASSES.inverted}>
                             Buy
@@ -96,7 +86,7 @@ const ProductCard = ({ product }: any) => {
                         <input type="text" name="amount" onChange={handleChange} value={amount} />
                     </>
                 )}
-                {currentAuthentication && currentAuthentication.user.role === UserRole.Seller && (
+                {currentUser && currentUser.role === UserRole.Seller && (
                     <Button onClick={handleDelete} buttonType={BUTTON_TYPE_CLASSES.inverted}>
                         Delete
                     </Button>

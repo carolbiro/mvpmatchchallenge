@@ -1,27 +1,19 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Authorization from './routes/auth/auth.component';
-import { AuthenticationContext } from './contexts/authentication.context';
+import { UserContext } from './contexts/user.context';
+import { ApiError } from './services/api';
 import Home from './routes/home/home.component';
 import Navigation from './routes/navigation/navigation.component';
 import Products from './routes/products/products.component';
 
 import './App.css';
 
-export class ApiError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ApiError";
-    Object.setPrototypeOf(this, ApiError.prototype);
-  }
-}
-
 function App() {
-  const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
+  const { setCurrentUser: setCurrentUser } = useContext(UserContext);
 
   useEffect(() => {
-    // if(currentAuthentication){
-    const fetchToken = async () => {
+    const fetchUser = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
         const refreshToken = localStorage.getItem('refreshToken');
@@ -40,7 +32,7 @@ function App() {
               // Access token has expired, request a new one using refresh token
               const response = await fetch('/auth/refreshTokens', {
                 method: 'POST',
-                body: JSON.stringify({ token: refreshToken, username: currentAuthentication?.user.username }),
+                body: JSON.stringify({ token: refreshToken, username: decoded.username }),
                 headers: {
                   'Content-Type': 'application/json'
                 }
@@ -53,14 +45,14 @@ function App() {
 
               localStorage.setItem('accessToken', res.accessToken);
               localStorage.setItem('refreshToken', res.refreshToken);
-              setCurrentAuthentication({ user: user, accessToken: res.accessToken, refreshToken: res.refreshToken });
+              setCurrentUser(user);
             } else {
               localStorage.removeItem('accessToken');
               localStorage.removeItem('refreshToken');
-              setCurrentAuthentication(null);
+              setCurrentUser(null);
             }
           } else {
-            setCurrentAuthentication({ user: user, accessToken: accessToken, refreshToken: refreshToken });
+            setCurrentUser(user);
           }
         }
       } catch(error) {
@@ -70,8 +62,7 @@ function App() {
       }
     };
 
-    fetchToken();
-    // }
+    fetchUser();
   }, []);
 
   return (

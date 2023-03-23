@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ApiError } from '../../App';
-import { AuthenticationContext } from '../../contexts/authentication.context';
+import { ApiError, fetchWithAuth } from '../../services/api';
+import { UserContext } from '../../contexts/user.context';
 import { ProductsContext, Product } from '../../contexts/products.context';
 import { ProductInputContainer } from './product-input.styles';
 import FormInput from '../form-input/form-input.component';
@@ -14,7 +14,7 @@ const defaultFormFields = {
 };
 
 const ProductInput = () => {
-    const { currentAuthentication: currentAuthentication } = useContext(AuthenticationContext);
+    const { currentUser: currentUser } = useContext(UserContext);
     const { currentProducts: currentProducts, setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { productName, amountAvailable, cost } = formFields;
@@ -31,16 +31,12 @@ const ProductInput = () => {
             productName,
             "amountAvailable": parseFloat(amountAvailable),
             "cost": parseFloat(cost),
-            "sellerId": currentAuthentication?.user.id,
+            "sellerId": currentUser?.id,
         } as Product;
 
         try{        
-            const response = await fetch('/products', {
+            const response = await fetchWithAuth('/products', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-                },
                 body: JSON.stringify(productToAdd)
             });
             const res = await response.json();

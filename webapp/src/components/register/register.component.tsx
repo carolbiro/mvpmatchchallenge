@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ApiError } from '../../App';
+import { ApiError } from '../../services/api';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 
@@ -35,7 +35,7 @@ const SignUpForm = () => {
       if (!response.ok) {
           throw new ApiError(`${res.message}`);
       }
-      
+
       resetFormFields();
       alert('User registered successfully!');
     } catch (error) {

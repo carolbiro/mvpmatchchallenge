@@ -1,25 +1,19 @@
 import { useState, useContext } from 'react';
-import { ApiError } from '../../App';
-import { AuthenticationContext, User, Authentication } from '../../contexts/authentication.context';
+import { ApiError } from '../../services/api';
+import { UserContext, User } from '../../contexts/user.context';
+import { fetchWithAuth } from '../../services/api';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { DepositContainer } from "./deposit.styles";
 import { ButtonsContainer } from '../login/login.styles';
 
-
 const Deposit = () => {
-    const { currentAuthentication: currentAuthentication, setCurrentAuthentication: setCurrentAuthentication } = useContext(AuthenticationContext);
+    const { currentUser: currentUser, setCurrentUser: setCurrentUser } = useContext(UserContext);
     const [deposit, setDeposit] = useState<number | ''>('');
 
-    const updateDeposit = async (transactionMethod: string, requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-        }
-    }) => {
+    const updateDeposit = async (transactionMethod: string, requestOptions = { method: 'POST'}) => {
         try {
-            const response = await fetch(`/transactions/${transactionMethod}`, requestOptions);
+            const response = await fetchWithAuth(`/transactions/${transactionMethod}`, requestOptions);
             const res = await response.json();
 
             if (!response.ok) {
@@ -27,8 +21,7 @@ const Deposit = () => {
             }
 
             setDeposit('');
-            const updatedAuth = { ...currentAuthentication, user: res } as Authentication;
-            setCurrentAuthentication(updatedAuth);
+            setCurrentUser(res);
         } catch (error) {
             console.error(error);
             if (error instanceof ApiError)
@@ -40,10 +33,6 @@ const Deposit = () => {
         event.preventDefault();
         const requestOptions = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${currentAuthentication?.accessToken}`
-            },
             body: JSON.stringify({ deposit }),
         }
         await updateDeposit('deposit', requestOptions);
@@ -61,7 +50,7 @@ const Deposit = () => {
     return (
         <DepositContainer>
             <form onSubmit={handleSubmit}>
-                <h2>Deposit: {currentAuthentication?.user.deposit} cents</h2>
+                <h2>Deposit: {currentUser?.deposit} cents</h2>
                 <span>Add money in order to buy products</span>
                 <FormInput
                     label='Deposit:'

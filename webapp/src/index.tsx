@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
-import { AuthenticationProvider } from './contexts/authentication.context';
+import { UserProvider } from './contexts/user.context';
 import { ProductsProvider } from './contexts/products.context';
 import reportWebVitals from './reportWebVitals';
 
@@ -13,11 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthenticationProvider>
+      <UserProvider>
         <ProductsProvider>
           <App />
         </ProductsProvider>
-      </AuthenticationProvider>
+      </UserProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
