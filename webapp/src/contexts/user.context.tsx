@@ -27,6 +27,6 @@ interface UserProviderProps {
 }
 export const UserProvider = ({ children }: UserProviderProps) => {
     const [currentUser, setCurrentUser] = useState<null | User>(null);
-    const value = { currentUser: currentUser, setCurrentUser: setCurrentUser };
+    const value = { currentUser, setCurrentUser };
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>
 }

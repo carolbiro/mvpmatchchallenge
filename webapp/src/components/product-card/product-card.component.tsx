@@ -13,8 +13,8 @@ import {
 } from './product-card.styles';
 
 const ProductCard = ({ product }: any) => {
-    const { currentUser: currentUser, setCurrentUser: setCurrentUser } = useContext(UserContext);
-    const { currentProducts: currentProducts, setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
+    const { currentUser, setCurrentUser } = useContext(UserContext);
+    const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     const { id, productName, cost, amountAvailable } = product;
     const [amount, setAmount] = useState('1');
 
@@ -45,7 +45,7 @@ const ProductCard = ({ product }: any) => {
             const user = currentUser as User;
             const newBalance = user.deposit - parseFloat(res.totalSpent);
             await setCurrentUser({...user, "deposit": newBalance });
-            alert(`${amount} of \"${productName}\" has been purchased!\nTotal spent: ${res.totalSpent} cents.\nYour change is: ${JSON.stringify(res.change)}`);
+            alert(`${amount} of "${productName}" has been purchased!\nTotal spent: ${res.totalSpent} cents.\nYour change is: ${JSON.stringify(res.change)}`);
         } catch (error) {
             console.error(error);
             if (error instanceof ApiError)
@@ -60,7 +60,7 @@ const ProductCard = ({ product }: any) => {
             // update the products context
             const updatedProducts = currentProducts.filter(item => item.id !== id) as Product[];
             await setCurrentProducts(updatedProducts);
-            alert(`\"${productName}\" has been deleted!`);
+            alert(`"${productName}" has been deleted!`);
         } catch (error) {
             console.log(error);
             alert(error);

@@ -11,7 +11,7 @@ import {
 } from './navigation.styles';
 
 const Navigation = () => {
-    const { currentUser: currentUser, setCurrentUser: setCurrentUser } = useContext(UserContext);
+    const { currentUser, setCurrentUser } = useContext(UserContext);
     const navigate = useNavigate();
     const signOutUser = () => {
         setCurrentUser(null);

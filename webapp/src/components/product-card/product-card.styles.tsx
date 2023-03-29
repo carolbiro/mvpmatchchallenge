@@ -15,7 +15,7 @@ export const ProductCardContainer = styled.div`
   }
 
   input {
-    width:40px;
+    width:45px;
     padding:0 10px;
     margin-left: 15px;
   }

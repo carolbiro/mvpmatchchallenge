@@ -10,7 +10,7 @@ import Products from './routes/products/products.component';
 import './App.css';
 
 function App() {
-  const { setCurrentUser: setCurrentUser } = useContext(UserContext);
+  const { setCurrentUser } = useContext(UserContext);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,6 +63,7 @@ function App() {
     };
 
     fetchUser();
+    // eslint-disable-next-line
   }, []);
 
   return (

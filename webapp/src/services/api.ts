@@ -1,5 +1,7 @@
 import jwt_decode from "jwt-decode";
 
+const API_BASE_URL = "http://localhost:3000";
+
 export class ApiError extends Error {
   constructor(message: string) {
     super(message);
@@ -20,7 +22,7 @@ export const fetchWithAuth = async (input: RequestInfo, init: RequestInit) => {
     if (decodedAccessToken.exp < currentTime) {
       // Access token has expired, try to refresh it
       try {
-        const response = await fetch(`/auth/refreshTokens`, {
+        const response = await fetch(`${API_BASE_URL}/auth/refreshTokens`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

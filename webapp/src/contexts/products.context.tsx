@@ -22,6 +22,6 @@ interface ProductsProviderProps {
 }
 export const ProductsProvider = ({ children }: ProductsProviderProps) => {
     const [currentProducts, setCurrentProducts] = useState<Product[]>([]);
-    const value = { currentProducts: currentProducts, setCurrentProducts: setCurrentProducts };
+    const value = { currentProducts, setCurrentProducts };
     return <ProductsContext.Provider value={value}>{children}</ProductsContext.Provider>
 }

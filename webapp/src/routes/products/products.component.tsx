@@ -4,7 +4,7 @@ import { ProductsContext } from '../../contexts/products.context';
 import { ApiError } from '../../services/api';
 
 const Products = () => {
-    const { currentProducts: currentProducts, setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
+    const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     useEffect(() => {
         const getProducts = async () => {
             try {    
@@ -28,6 +28,7 @@ const Products = () => {
             }
         }
         getProducts();
+        // eslint-disable-next-line
     },[]);
     return (
         <div>

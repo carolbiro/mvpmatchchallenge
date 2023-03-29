@@ -5,7 +5,7 @@ import ProductInput from '../../components/product-input/product-input.component
 import { HomeContainer, Title } from './home.styles';
 
 const Home = () => {
-    const { currentUser: currentUser } = useContext(UserContext);
+    const { currentUser } = useContext(UserContext);
 
     return (
         <HomeContainer>

@@ -14,8 +14,8 @@ const defaultFormFields = {
 };
 
 const ProductInput = () => {
-    const { currentUser: currentUser } = useContext(UserContext);
-    const { currentProducts: currentProducts, setCurrentProducts: setCurrentProducts } = useContext(ProductsContext);
+    const { currentUser } = useContext(UserContext);
+    const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { productName, amountAvailable, cost } = formFields;
     const navigate = useNavigate();

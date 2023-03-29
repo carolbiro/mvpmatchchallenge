@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { ApiError } from '../../services/api';
-import { UserContext, User } from '../../contexts/user.context';
+import { UserContext } from '../../contexts/user.context';
 import { fetchWithAuth } from '../../services/api';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
@@ -8,7 +8,7 @@ import { DepositContainer } from "./deposit.styles";
 import { ButtonsContainer } from '../login/login.styles';
 
 const Deposit = () => {
-    const { currentUser: currentUser, setCurrentUser: setCurrentUser } = useContext(UserContext);
+    const { currentUser, setCurrentUser } = useContext(UserContext);
     const [deposit, setDeposit] = useState<number | ''>('');
 
     const updateDeposit = async (transactionMethod: string, requestOptions = { method: 'POST'}) => {
@@ -23,6 +23,7 @@ const Deposit = () => {
             setDeposit('');
             setCurrentUser(res);
         } catch (error) {
+            setDeposit('');
             console.error(error);
             if (error instanceof ApiError)
                 alert(error.message);
