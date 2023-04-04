@@ -1,14 +1,16 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ApiError } from '../../services/api';
-import { UserContext } from '../../contexts/user.context';
 import { fetchWithAuth } from '../../services/api';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { DepositContainer } from "./deposit.styles";
 import { ButtonsContainer } from '../login/login.styles';
+import { setCurrentUser } from '../../store/user/user.action';
 
 const Deposit = () => {
-    const { currentUser, setCurrentUser } = useContext(UserContext);
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state:any) => state.user.currentUser);
     const [deposit, setDeposit] = useState<number | ''>('');
 
     const updateDeposit = async (transactionMethod: string, requestOptions = { method: 'POST'}) => {
@@ -21,7 +23,7 @@ const Deposit = () => {
             }
 
             setDeposit('');
-            setCurrentUser(res);
+            dispatch(setCurrentUser(res));
         } catch (error) {
             setDeposit('');
             console.error(error);

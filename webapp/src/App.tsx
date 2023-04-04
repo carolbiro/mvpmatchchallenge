@@ -1,16 +1,17 @@
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Routes, Route } from 'react-router-dom';
 import Authorization from './routes/auth/auth.component';
-import { UserContext } from './contexts/user.context';
 import { ApiError } from './services/api';
 import Home from './routes/home/home.component';
 import Navigation from './routes/navigation/navigation.component';
 import Products from './routes/products/products.component';
+import { setCurrentUser } from './store/user/user.action';
 
 import './App.css';
 
 function App() {
-  const { setCurrentUser } = useContext(UserContext);
+  const  dispatch = useDispatch();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -45,14 +46,14 @@ function App() {
 
               localStorage.setItem('accessToken', res.accessToken);
               localStorage.setItem('refreshToken', res.refreshToken);
-              setCurrentUser(user);
+              dispatch(setCurrentUser(user));
             } else {
               localStorage.removeItem('accessToken');
               localStorage.removeItem('refreshToken');
-              setCurrentUser(null);
+              dispatch(setCurrentUser(null));
             }
           } else {
-            setCurrentUser(user);
+            dispatch(setCurrentUser(user));
           }
         }
       } catch(error) {

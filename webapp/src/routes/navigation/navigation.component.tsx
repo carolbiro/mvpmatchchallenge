@@ -1,6 +1,7 @@
-import { Fragment, useContext } from 'react';
+import { Fragment } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Outlet , useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/user.context';
+import { setCurrentUser } from '../../store/user/user.action';
 
 import {
     NavigationContainer,
@@ -11,10 +12,11 @@ import {
 } from './navigation.styles';
 
 const Navigation = () => {
-    const { currentUser, setCurrentUser } = useContext(UserContext);
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state:any) => state.user.currentUser)
     const navigate = useNavigate();
     const signOutUser = () => {
-        setCurrentUser(null);
+        dispatch(setCurrentUser(null));
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         navigate("/");

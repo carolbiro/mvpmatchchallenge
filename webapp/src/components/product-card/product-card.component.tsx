@@ -1,8 +1,10 @@
 import { useContext, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ApiError, fetchWithAuth } from '../../services/api';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
-import { UserContext, UserRole, User } from '../../contexts/user.context';
+import { UserRole, User } from '../../store/user/user.types';
 import { ProductsContext, Product } from '../../contexts/products.context';
+import { setCurrentUser } from '../../store/user/user.action';
 
 import {
     ProductCardContainer,
@@ -13,7 +15,9 @@ import {
 } from './product-card.styles';
 
 const ProductCard = ({ product }: any) => {
-    const { currentUser, setCurrentUser } = useContext(UserContext);
+    const dispatch = useDispatch();
+    const currentUser = useSelector((state: any) => state.user.currentUser);
+
     const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     const { id, productName, cost, amountAvailable } = product;
     const [amount, setAmount] = useState('1');
@@ -44,7 +48,7 @@ const ProductCard = ({ product }: any) => {
             await setCurrentProducts(updatedProducts);
             const user = currentUser as User;
             const newBalance = user.deposit - parseFloat(res.totalSpent);
-            await setCurrentUser({...user, "deposit": newBalance });
+            await dispatch(setCurrentUser({ ...user, "deposit": newBalance }));
             alert(`${amount} of "${productName}" has been purchased!\nTotal spent: ${res.totalSpent} cents.\nYour change is: ${JSON.stringify(res.change)}`);
         } catch (error) {
             console.error(error);

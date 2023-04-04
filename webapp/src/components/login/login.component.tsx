@@ -1,11 +1,13 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { ApiError } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
-import { UserContext, User } from '../../contexts/user.context';
+import { User } from '../../store/user/user.types';
 import { LogInContainer, ButtonsContainer } from './login.styles';
 import jwt_decode from "jwt-decode";
+import { setCurrentUser } from '../../store/user/user.action';
 
 const defaultFormFields = {
   username: '',
@@ -13,9 +15,9 @@ const defaultFormFields = {
 };
 
 const SignInForm = () => {
+  const dispatch = useDispatch();
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { username, password } = formFields;
-  const { setCurrentUser } = useContext(UserContext);
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
   };
@@ -40,7 +42,7 @@ const SignInForm = () => {
       localStorage.setItem('refreshToken', res.refreshToken);
 
       var decoded = jwt_decode(res.accessToken) as User;
-      setCurrentUser(decoded);
+      dispatch(setCurrentUser(decoded));
       resetFormFields();
       navigate('/');
     } catch (error) {

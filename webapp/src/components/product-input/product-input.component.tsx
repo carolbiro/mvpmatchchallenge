@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, fetchWithAuth } from '../../services/api';
-import { UserContext } from '../../contexts/user.context';
 import { ProductsContext, Product } from '../../contexts/products.context';
 import { ProductInputContainer } from './product-input.styles';
 import FormInput from '../form-input/form-input.component';
@@ -14,7 +14,8 @@ const defaultFormFields = {
 };
 
 const ProductInput = () => {
-    const { currentUser } = useContext(UserContext);
+    const currentUser = useSelector((state:any) => state.user.currentUser);
+
     const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { productName, amountAvailable, cost } = formFields;

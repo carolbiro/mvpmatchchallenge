@@ -1,11 +1,11 @@
-import { useContext } from 'react';
-import { UserContext, UserRole } from '../../contexts/user.context';
+import { useSelector } from 'react-redux';
+import { UserRole } from '../../store/user/user.types';
 import Deposit from '../../components/deposit/deposit.component';
 import ProductInput from '../../components/product-input/product-input.component';
 import { HomeContainer, Title } from './home.styles';
 
 const Home = () => {
-    const { currentUser } = useContext(UserContext);
+    const currentUser = useSelector((state:any) => state.user.currentUser)
 
     return (
         <HomeContainer>
