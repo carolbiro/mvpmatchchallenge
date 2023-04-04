@@ -1,5 +1,5 @@
 import ProductCard from '../product-card/product-card.component';
-import { Product } from '../../contexts/products.context';
+import { Product } from '../../store/products/products.types';
 
 import {
     ProductsPreviewContainer,

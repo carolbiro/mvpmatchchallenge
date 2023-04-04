@@ -1,11 +1,12 @@
-import { useState, useContext } from 'react';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ApiError, fetchWithAuth } from '../../services/api';
-import { ProductsContext, Product } from '../../contexts/products.context';
 import { ProductInputContainer } from './product-input.styles';
 import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
+import { setCurrentProducts } from '../../store/products/products.action';
+import { Product } from '../../store/products/products.types';
 
 const defaultFormFields = {
     productName: '',
@@ -14,9 +15,10 @@ const defaultFormFields = {
 };
 
 const ProductInput = () => {
+    const dispatch = useDispatch();
     const currentUser = useSelector((state:any) => state.user.currentUser);
+    const currentProducts = useSelector((state:any) => state.products.currentProducts);
 
-    const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { productName, amountAvailable, cost } = formFields;
     const navigate = useNavigate();
@@ -47,7 +49,7 @@ const ProductInput = () => {
             }
             
             currentProducts.push(productToAdd);
-            await setCurrentProducts(currentProducts);
+            await dispatch(setCurrentProducts(currentProducts));
             alert('Product added successfully!');
             navigate('/products');
         } catch (error) {

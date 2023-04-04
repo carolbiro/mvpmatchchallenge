@@ -1,10 +1,11 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ApiError, fetchWithAuth } from '../../services/api';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 import { UserRole, User } from '../../store/user/user.types';
-import { ProductsContext, Product } from '../../contexts/products.context';
+import { Product } from '../../store/products/products.types';
 import { setCurrentUser } from '../../store/user/user.action';
+import { setCurrentProducts } from '../../store/products/products.action';
 
 import {
     ProductCardContainer,
@@ -17,8 +18,8 @@ import {
 const ProductCard = ({ product }: any) => {
     const dispatch = useDispatch();
     const currentUser = useSelector((state: any) => state.user.currentUser);
+    const currentProducts = useSelector((state: any) => state.products.currentProducts);
 
-    const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
     const { id, productName, cost, amountAvailable } = product;
     const [amount, setAmount] = useState('1');
 
@@ -38,14 +39,14 @@ const ProductCard = ({ product }: any) => {
             }
 
             // update the products context
-            const updatedProducts = currentProducts.map(item => {
+            const updatedProducts = currentProducts.map((item: Product) => {
                 if (item.id === id) {
                     item.amountAvailable -= parseFloat(amount);
                     return item;
                 }
                 return item;
             }) as Product[];
-            await setCurrentProducts(updatedProducts);
+            await dispatch(setCurrentProducts(updatedProducts));
             const user = currentUser as User;
             const newBalance = user.deposit - parseFloat(res.totalSpent);
             await dispatch(setCurrentUser({ ...user, "deposit": newBalance }));
@@ -62,8 +63,8 @@ const ProductCard = ({ product }: any) => {
             await fetchWithAuth(`/products/${id}`, { method: 'DELETE'});
 
             // update the products context
-            const updatedProducts = currentProducts.filter(item => item.id !== id) as Product[];
-            await setCurrentProducts(updatedProducts);
+            const updatedProducts = currentProducts.filter((item: Product) => item.id !== id) as Product[];
+            await dispatch(setCurrentProducts(updatedProducts));
             alert(`"${productName}" has been deleted!`);
         } catch (error) {
             console.log(error);

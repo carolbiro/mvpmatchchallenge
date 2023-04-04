@@ -1,10 +1,13 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ProductsPreview from '../../components/products/products.component';
-import { ProductsContext } from '../../contexts/products.context';
 import { ApiError } from '../../services/api';
+import { setCurrentProducts } from '../../store/products/products.action';
 
 const Products = () => {
-    const { currentProducts, setCurrentProducts } = useContext(ProductsContext);
+    const dispatch = useDispatch();
+    const currentProducts = useSelector((state:any) => state.products.currentProducts);
+
     useEffect(() => {
         const getProducts = async () => {
             try {    
@@ -20,7 +23,7 @@ const Products = () => {
                     throw new ApiError(`${res.message}`);
                 }
 
-                await setCurrentProducts(res);
+                await dispatch(setCurrentProducts(res));
             } catch (error) {
                 console.error(error);
                 if (error instanceof ApiError)
