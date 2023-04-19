@@ -1,4 +1,4 @@
-# mvpmatchchallenge
+# mvpmatchchallenge - Vending Machine
 
 The `api` folder contains a Node.js API as per the challenge requirements.
 Cd into api folder then `npm i` to install dependencies.
