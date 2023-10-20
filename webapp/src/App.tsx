@@ -6,7 +6,7 @@ import { ApiError } from './services/api';
 import Home from './routes/home/home.component';
 import Navigation from './routes/navigation/navigation.component';
 import Products from './routes/products/products.component';
-import { setCurrentUser } from './store/user/user.action';
+import { setCurrentUser } from './store/user/user.reducer';
 
 import './App.css';
 

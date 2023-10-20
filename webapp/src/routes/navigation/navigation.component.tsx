@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet , useNavigate } from 'react-router-dom';
-import { setCurrentUser } from '../../store/user/user.action';
+import { setCurrentUser } from '../../store/user/user.reducer';
 
 import {
     NavigationContainer,

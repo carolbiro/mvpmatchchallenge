@@ -4,7 +4,7 @@ import { ApiError, fetchWithAuth } from '../../services/api';
 import Button, { BUTTON_TYPE_CLASSES } from '../button/button.component';
 import { UserRole, User } from '../../store/user/user.types';
 import { Product } from '../../store/products/products.types';
-import { setCurrentUser } from '../../store/user/user.action';
+import { setCurrentUser } from '../../store/user/user.reducer';
 import { setCurrentProducts } from '../../store/products/products.action';
 
 import {

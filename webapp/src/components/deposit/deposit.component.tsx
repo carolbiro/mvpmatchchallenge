@@ -6,7 +6,7 @@ import FormInput from '../form-input/form-input.component';
 import Button from '../button/button.component';
 import { DepositContainer } from "./deposit.styles";
 import { ButtonsContainer } from '../login/login.styles';
-import { setCurrentUser } from '../../store/user/user.action';
+import { setCurrentUser } from '../../store/user/user.reducer';
 
 const Deposit = () => {
     const dispatch = useDispatch();

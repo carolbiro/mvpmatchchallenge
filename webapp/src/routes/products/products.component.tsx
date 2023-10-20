@@ -35,9 +35,12 @@ const Products = () => {
     },[]);
     return (
         <div>
-            <ProductsPreview key="Products" title="Products" products={currentProducts}/>
+            {currentProducts ? 
+                <ProductsPreview key="Products" title="Products" products={currentProducts}/> :
+                <>Loading</>
+            }
         </div>
     );
 }
-
+    
 export default Products;

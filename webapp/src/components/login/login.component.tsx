@@ -7,7 +7,7 @@ import Button from '../button/button.component';
 import { User } from '../../store/user/user.types';
 import { LogInContainer, ButtonsContainer } from './login.styles';
 import jwt_decode from "jwt-decode";
-import { setCurrentUser } from '../../store/user/user.action';
+import { setCurrentUser } from '../../store/user/user.reducer';
 
 const defaultFormFields = {
   username: '',
